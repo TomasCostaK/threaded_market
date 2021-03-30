@@ -93,3 +93,22 @@ Interface PaymentPoint Cashier:
     - Corridors: FIFO with size 2
     - PaymentHall: FIFO with size 2
     - PaymentPoint: -
+
+
+## Notes
+
+Quando são criados, entrar num array para que sejam condiçoes de threads.
+Serem os clientes a avisar o manager. O manager está em wait e quando os clientes avançam, notificam o manager.
+O cliente quando chega À caixa de pagamento avisa que está pronto.
+
+Controlo tem start, suspend, etc... (em modo manual vs automatico)
+
+OCC Layout
+- Grelha representativa da cor e do estado do cliente
+- Butao setup nao relevante
+
+OIS Layout
+- Dividir halls e colocar os IDs em real time lá
+
+State Diagram:
+- Colocar os metodos nas setas de transição
