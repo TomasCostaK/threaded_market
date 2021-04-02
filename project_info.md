@@ -6,6 +6,7 @@ The shared areas all implement the methods of the interfaces it contains.
     (control is present in all of them)
     - OutsideHall (multiple clients) + Manager 
     - EntranceHall (up to 6 clients) + Manager
+    - ManagerHall (Manager + client notifying)
     - CorridorHalls (up to 3 clients per corridorHall)
     - Corridors (up to 2 clients)
     - PaymentHall (up to 2 clients)
@@ -26,19 +27,21 @@ Interface Control: (common to all rooms)
 Interface OutsideHall Customer:
 
     - enter()
-    - listen()      - wait to be called by the manager
-    - leave()       - exit the queue
+    - notifyManagerArrival()      - warn manager of arrival
+    - leave()                     - exit the queue
 
 Interface EntranceHall Customer:
 
     - enter()
-    - listen()
+    - notifyManagerArrival()    - warn manager that client is going to next room
+    - notifyManagerDeparture()    - warn manager that client is going to next room
     - leave()
 
 Interface CorridorHall Customer:
 
     - enter()
     - checkCorridor()   - verify if it can advance to the corridor
+    - notifyManagerDeparture()    - warn manager that client is going to next room
     - leave()
 
 Interface Corridor Customer:
@@ -52,7 +55,7 @@ Interface Corridor Customer:
 Interface PaymentHall Customer:
 
     - enter()
-    - listen()
+    - notifyCashierArrival()    - warn cashier that client is ready to pay
     - leave()
 
 Interface PaymentPoint Customer:
@@ -63,26 +66,22 @@ Interface PaymentPoint Customer:
 ### Manager
 Interface OutsideHall Manager:
 
-    - checkNextSection()    - verify if he can send clients to the next section (EntranceHall)
     - callClient()          - envia o cliente para a proxima secçao
-    - returnToManagerHall() - volta ao managerHall
 
 Interface EntranceHall Manager:
 
-    - checkNextSection()    - verify if he can send clients to the next section (one of the CorridorHalls)
-    - callClient() 
-    - returnToManagerHall()
+    - callClient()          - envia o cliente para a proxima secçao
 
 Interface ManagerHall Manager:
 
-    - checkClients()        - verify if queues of OutsideHall or EntranceHall are not empty (there's clients waiting)
+    - listenClients()        - wait for clients to notify him, they either joined or left a room
 
 
 ### Cashier
 Interface PaymentPoint Cashier:
 
-    - checkClients()
-    - callClient()
+    - listenClients()       - await for clients to notify him
+    - callClient()          - call next client in line to pay
 
 
 ## Data structure
