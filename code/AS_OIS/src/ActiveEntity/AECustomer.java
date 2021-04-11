@@ -3,6 +3,7 @@ package ActiveEntity;
 
 import SAIdle.IIdle_Customer;
 import SAOutsideHall.IOutsideHall_Customer;
+import SAEntranceHall.IEntranceHall_Customer;
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -22,12 +23,15 @@ public class AECustomer extends Thread {
     private final IIdle_Customer idle;
     // área partilhada OutsideHall
     private final IOutsideHall_Customer outsideHall;
+    private final IEntranceHall_Customer entranceHall;
     
-    public AECustomer( int customerId, IIdle_Customer idle, IOutsideHall_Customer outsideHall  /* mais args */ ) {
+    public AECustomer( int customerId, IIdle_Customer idle, IOutsideHall_Customer outsideHall, IEntranceHall_Customer entranceHall  /* mais args */ ) {
         this.customerId = customerId;
         this.idle = idle;
         this.outsideHall = outsideHall;
+        this.entranceHall = entranceHall;
     }
+    
     @Override
     public void run() {
         while ( true ) {
@@ -36,6 +40,7 @@ public class AECustomer extends Thread {
             // se simulação activa (não suspend, não stop, não end), thread avança para o outsideHall
             outsideHall.in( customerId );
             // mais
+            entranceHall.in( customerId );
         }
     }
 }

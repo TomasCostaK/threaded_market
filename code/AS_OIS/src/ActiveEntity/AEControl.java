@@ -15,12 +15,21 @@ public class AEControl extends Thread {
 
     private final IIdle_Control idle;
     
-    public AEControl( IIdle_Control idle /* mais áreas partilhadas */ ) {
+    private final int nCustomers;
+    
+    public AEControl( IIdle_Control idle, int nCustomers /* mais áreas partilhadas */ ) {
         this.idle = idle;
+        this.nCustomers = nCustomers;
     }
-    public void start( int nCustomers, Socket socket ) {
+    
+    /**public void start( int nCustomers, Socket socket ) {
+        idle.start( nCustomers );
+    }**/
+    
+     public void start( int nCostumers ) {
         idle.start( nCustomers );
     }
+    
     public void end() {
         // terminar Customers em idle
         idle.end();
@@ -31,6 +40,7 @@ public class AEControl extends Thread {
     
     @Override
     public void run() {
-        // ver qual a msg recebida, executar comando e responder
+        start(nCustomers);
+        
     }
 }

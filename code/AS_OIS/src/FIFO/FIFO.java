@@ -96,13 +96,13 @@ public class FIFO implements IFIFO {
             
             // incrementar número customers no fifo
             count++;
-            
+     
             // ciclo à espera de autorização para sair do fifo
             while ( !leave[ idx ] )
                 // qd se faz await, permite-se q outros thread tenham acesso
                 // à zona protegida pelo lock
                 cStay[ idx ].await();
-
+            
             // id do Customer q está a sair do fifo
             id = this.customerId[ idx ];
                     
