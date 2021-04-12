@@ -27,6 +27,7 @@ public class SAIdle implements IIdle_Customer,
     
     @Override
     public void idle() {
+        System.out.println("Manager idle.");
     }
     
     // idle Customer
@@ -37,14 +38,13 @@ public class SAIdle implements IIdle_Customer,
             while (customerIdle == true) {
                 notStarted.await();
             }  
-            System.out.println("Customer " + customerId + " entered OutsideHall.");
+            System.out.println("Customer " + customerId + " entering OutsideHall.");
         }
         catch(InterruptedException ex)
         {
           System.out.println( " interrupted");
         }
-        finally {
-          
+        finally {   
           rl.unlock();
         }
     }

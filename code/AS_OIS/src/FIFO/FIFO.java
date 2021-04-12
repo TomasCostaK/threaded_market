@@ -87,7 +87,6 @@ public class FIFO implements IFIFO {
             idxIn = (++idxIn) % maxCustomers;
             // inserir customer no fifo
             this.customerId[ idx ] = customerId;
-            
             // o fifo poderá estar vazio, pelo q neste caso a Customer poderá
             // estar à espera q um Customer chegue. Necessério avisar Manager
             // q se encontra em espera na Condition cEmpty
@@ -96,13 +95,11 @@ public class FIFO implements IFIFO {
             
             // incrementar número customers no fifo
             count++;
-     
             // ciclo à espera de autorização para sair do fifo
             while ( !leave[ idx ] )
                 // qd se faz await, permite-se q outros thread tenham acesso
                 // à zona protegida pelo lock
                 cStay[ idx ].await();
-            
             // id do Customer q está a sair do fifo
             id = this.customerId[ idx ];
                     
@@ -126,6 +123,7 @@ public class FIFO implements IFIFO {
                 cFull.signalAll();
             // decrementar número de customers no fifo
             count--;
+            
             
         } catch ( Exception ex ) {}
         finally {

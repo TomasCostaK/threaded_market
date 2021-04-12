@@ -21,21 +21,38 @@ public class SAOutsideHall implements IOutsideHall_Manager,
     private final ReentrantLock rl = new ReentrantLock( true );
     private final Condition notCalled;
     private boolean customerWaiting;
+    private final Condition customerNotLeaved;
+    private boolean managerWaiting;
+    private boolean firstEntered;
+    private int nCustomers;
 
     public SAOutsideHall( int maxCustomers ) {
         fifoOutsideHall = new FIFO(maxCustomers);
         this.notCalled = rl.newCondition(); 
         this.customerWaiting = true; 
+        this.customerNotLeaved = rl.newCondition(); 
+        this.managerWaiting = true; 
+        this.firstEntered = false;
+        this.nCustomers = 0;
     } 
 
     @Override
     public void in(int customerId) {
         rl.lock();
         try {
+            if (nCustomers == 0) {
+                firstEntered = true;
+            }
+            System.out.println("Customer " + customerId + " in OutsideHall.");
+            int customerLeaving = fifoOutsideHall.in(customerId);
+            System.out.println("Customer " + customerLeaving + " leaving OutsideHall.");
             while (customerWaiting == true) {
                 notCalled.await();
             }  
-            System.out.println("Customer " + customerId + " entering EntranceHall");
+            managerWaiting = false;
+            customerNotLeaved.signal();
+            
+
         }
         catch(InterruptedException ex)
         {
@@ -49,6 +66,24 @@ public class SAOutsideHall implements IOutsideHall_Manager,
     
     @Override
     public void call() {
-        fifoOutsideHall.out();
+        System.out.println("Manager in Outside Hall");
+        rl.lock();
+        try {
+            while(true){
+                if(firstEntered==true) fifoOutsideHall.out();
+                while (managerWaiting == true)
+                    customerNotLeaved.await();
+                customerWaiting = false;
+                notCalled.signal();
+                fifoOutsideHall.out();
+                }
+        }
+        catch(Exception ex)
+        {
+          System.out.println( " interrupted");
+        }
+        finally {
+          rl.unlock();
+        }       
     }
 }
