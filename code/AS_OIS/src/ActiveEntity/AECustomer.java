@@ -4,6 +4,7 @@ package ActiveEntity;
 import SAIdle.IIdle_Customer;
 import SAOutsideHall.IOutsideHall_Customer;
 import SAEntranceHall.IEntranceHall_Customer;
+import java.util.concurrent.TimeUnit;
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -35,12 +36,15 @@ public class AECustomer extends Thread {
     @Override
     public void run() {
         while ( true ) {
+            try{
             // thread avança para Idle
-            idle.idle(customerId );
-            // se simulação activa (não suspend, não stop, não end), thread avança para o outsideHall
-            outsideHall.in( customerId );
-            // mais
-            entranceHall.in( customerId );
+                idle.idle(customerId );
+                // se simulação activa (não suspend, não stop, não end), thread avança para o outsideHall
+                outsideHall.in( customerId );
+                TimeUnit.SECONDS.sleep(5); 
+                entranceHall.in( customerId );
+            }
+            catch ( Exception ex ) {}
         }
     }
 }

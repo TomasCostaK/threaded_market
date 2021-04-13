@@ -95,6 +95,7 @@ public class FIFO implements IFIFO {
             
             // incrementar número customers no fifo
             count++;
+            
             // ciclo à espera de autorização para sair do fifo
             while ( !leave[ idx ] )
                 // qd se faz await, permite-se q outros thread tenham acesso
@@ -102,7 +103,6 @@ public class FIFO implements IFIFO {
                 cStay[ idx ].await();
             // id do Customer q está a sair do fifo
             id = this.customerId[ idx ];
-                    
             // atualizar variável de bloqueio
             leave[ idx ] = false;
             // avisar Manager que Customer vai sair. Manager está à espera na
@@ -150,6 +150,7 @@ public class FIFO implements IFIFO {
             // acordar o customer
             cStay[ idx ].signal();
             // aguardar até q Customer saia do fifo
+            
             while ( leave[ idx ] == true )
                 // qd se faz await, permite-se q outros thread tenham acesso
                 // à zona protegida pelo lock
@@ -160,4 +161,9 @@ public class FIFO implements IFIFO {
             rl.unlock();
         }
     }
+    
+    public int getCount() {
+        return count;
+    }
+    
 }

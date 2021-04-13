@@ -6,6 +6,7 @@
 package SAEntranceHall;
 
 import FIFO.FIFO;
+import Main.OIS_GUI;
 
 /**
  *
@@ -16,21 +17,41 @@ public class SAEntranceHall implements IEntranceHall_Customer,
                                        IEntranceHall_Control {
     
     final FIFO fifoEntranceHall;
+    private int totalCustomers;
+    private final OIS_GUI GUI;
+    private final int customersPosition[];
 
-    public SAEntranceHall( int maxCustomers ) {
-        fifoEntranceHall = new FIFO(maxCustomers);
+    public SAEntranceHall( int maxCustomers, OIS_GUI GUI ) {
+        this.fifoEntranceHall = new FIFO(maxCustomers);
+        this.GUI = GUI;
+        this.totalCustomers = maxCustomers;
+        this.customersPosition = new int[totalCustomers];
+        for(int i = 0; i < totalCustomers; i ++){
+            this.customersPosition[i] = -1;
+        }
     } 
     
     @Override
     public void call() {
-        fifoEntranceHall.out();
+        while (true) {
+            fifoEntranceHall.out();
+        }
     }
 
     @Override
     public void in(int customerId) {
-        System.out.println("Customer " + customerId + " waiting to enter CorridorHall");
-        int CostumerLeaving = fifoEntranceHall.in(customerId);
-        System.out.println("Customer " + customerId + " entering CorridorHall");
+        int position = this.selectPositionInGUI(customerId);
+        GUI.moveCustomer(customerId, new Integer[] {1, position});
+        int customerLeaving = fifoEntranceHall.in(customerId);
+        System.out.println("Customer " + customerLeaving + " leaving EntranceHall.");   
     }
-    
+   
+    private int selectPositionInGUI(int customerId){
+        int position = (int) Math.round((Math.random() * (totalCustomers - 1)));
+       
+        while(customersPosition[position] != -1) position = (int) Math.round((Math.random() * (totalCustomers - 1)));
+       
+        customersPosition[position] = customerId;
+        return position;
+    } 
 }

@@ -5,6 +5,8 @@
  */
 package SAIdle;
 
+import Main.OIS_GUI;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -22,7 +24,7 @@ public class SAIdle implements IIdle_Customer,
 
     public SAIdle() {
         this.notStarted = rl.newCondition(); 
-        this.customerIdle = true; 
+        this.customerIdle = true;
     }
     
     @Override
@@ -33,6 +35,7 @@ public class SAIdle implements IIdle_Customer,
     // idle Customer
     @Override
     public void idle( int customerId ) {
+        System.out.println("Customer " + customerId + " idle.");
         rl.lock();
         try {
             while (customerIdle == true) {
@@ -42,10 +45,13 @@ public class SAIdle implements IIdle_Customer,
         }
         catch(InterruptedException ex)
         {
-          System.out.println( " interrupted");
+          System.err.println("ERROR: Customer " + customerId + " was unable to enter Idle!");
         }
         finally {   
-          rl.unlock();
+          try{
+                Thread.sleep(this.randomTimeout());
+            } catch (InterruptedException ex) {}
+            rl.unlock();
         }
     }
         
@@ -53,7 +59,7 @@ public class SAIdle implements IIdle_Customer,
     public void start( int nCustomers ) {
         rl.lock();
         try {
-            TimeUnit.SECONDS.sleep(10); // só para simular o user a dar start
+            TimeUnit.SECONDS.sleep(5); // só para simular o user a dar start
             System.out.println("Start simulation...");
             customerIdle = false;
             notStarted.signal();
@@ -67,6 +73,11 @@ public class SAIdle implements IIdle_Customer,
     @Override
     public void end() {   
     }
+    
+    
+    private long randomTimeout(){
+        return new Random().nextInt(101);
+    } 
    
 }
 

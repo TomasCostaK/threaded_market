@@ -6,6 +6,9 @@
 package SAOutsideHall;
 
 import FIFO.FIFO;
+import Main.OIS_GUI;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -19,71 +22,52 @@ public class SAOutsideHall implements IOutsideHall_Manager,
     
     final FIFO fifoOutsideHall;
     private final ReentrantLock rl = new ReentrantLock( true );
-    private final Condition notCalled;
-    private boolean customerWaiting;
-    private final Condition customerNotLeaved;
+    private final Condition customerNotIn;
     private boolean managerWaiting;
-    private boolean firstEntered;
-    private int nCustomers;
+    private int totalCustomers;
+    private final OIS_GUI GUI;
+    private final int customersPosition[];
 
-    public SAOutsideHall( int maxCustomers ) {
-        fifoOutsideHall = new FIFO(maxCustomers);
-        this.notCalled = rl.newCondition(); 
-        this.customerWaiting = true; 
-        this.customerNotLeaved = rl.newCondition(); 
+    public SAOutsideHall( int totalCustomers, OIS_GUI GUI ) {
+        this.totalCustomers = totalCustomers;
+        this.GUI = GUI;
+        this.fifoOutsideHall = new FIFO(totalCustomers); 
+        this.customerNotIn = rl.newCondition(); 
         this.managerWaiting = true; 
-        this.firstEntered = false;
-        this.nCustomers = 0;
+        this.customersPosition = new int[totalCustomers];
+        for(int i = 0; i < totalCustomers; i ++){
+            this.customersPosition[i] = -1;
+        }
     } 
 
     @Override
     public void in(int customerId) {
-        rl.lock();
-        try {
-            if (nCustomers == 0) {
-                firstEntered = true;
-            }
-            System.out.println("Customer " + customerId + " in OutsideHall.");
-            int customerLeaving = fifoOutsideHall.in(customerId);
-            System.out.println("Customer " + customerLeaving + " leaving OutsideHall.");
-            while (customerWaiting == true) {
-                notCalled.await();
-            }  
-            managerWaiting = false;
-            customerNotLeaved.signal();
-            
-
-        }
-        catch(InterruptedException ex)
-        {
-          System.out.println( " interrupted");
-        }
-        finally {
-          rl.unlock();
-        }  
+        int position = this.selectPositionInGUI(customerId);
+        GUI.moveCustomer(customerId, new Integer[] {0, position});
+        int customerLeaving = fifoOutsideHall.in(customerId);
+        System.out.println("Customer " + customerLeaving + " leaving OutsideHall.");    
     }
     
     
     @Override
     public void call() {
-        System.out.println("Manager in Outside Hall");
-        rl.lock();
-        try {
-            while(true){
-                if(firstEntered==true) fifoOutsideHall.out();
-                while (managerWaiting == true)
-                    customerNotLeaved.await();
-                customerWaiting = false;
-                notCalled.signal();
-                fifoOutsideHall.out();
-                }
+        while (true) {
+            fifoOutsideHall.out();
         }
-        catch(Exception ex)
-        {
-          System.out.println( " interrupted");
-        }
-        finally {
-          rl.unlock();
-        }       
     }
+    
+    
+    private long randomTimeout(){
+        return new Random().nextInt(101);
+    }
+    
+    private int selectPositionInGUI(int customerId){
+        int position = (int) Math.round((Math.random() * (totalCustomers - 1)));
+       
+        while(customersPosition[position] != -1) position = (int) Math.round((Math.random() * (totalCustomers - 1)));
+       
+        customersPosition[position] = customerId;
+        return position;
+    }
+    
 }
