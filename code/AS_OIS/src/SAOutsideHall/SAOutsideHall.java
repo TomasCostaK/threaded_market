@@ -5,6 +5,8 @@
  */
 package SAOutsideHall;
 
+import ActiveEntity.AEControl;
+import Communication.NotifyCustomerState;
 import FIFO.FIFO;
 import Main.OIS_GUI;
 import java.util.Random;
@@ -27,8 +29,10 @@ public class SAOutsideHall implements IOutsideHall_Manager,
     private int totalCustomers;
     private final OIS_GUI GUI;
     private final int customersPosition[];
+    private final NotifyCustomerState notify;
+    
 
-    public SAOutsideHall( int totalCustomers, OIS_GUI GUI ) {
+    public SAOutsideHall( int totalCustomers, OIS_GUI GUI, NotifyCustomerState notify) {
         this.totalCustomers = totalCustomers;
         this.GUI = GUI;
         this.fifoOutsideHall = new FIFO(totalCustomers); 
@@ -38,10 +42,12 @@ public class SAOutsideHall implements IOutsideHall_Manager,
         for(int i = 0; i < totalCustomers; i ++){
             this.customersPosition[i] = -1;
         }
+        this.notify = notify;
     } 
 
     @Override
     public void in(int customerId) {
+        notify.sendCustomerState("OutsideHall", customerId);
         int position = this.selectPositionInGUI(customerId);
         GUI.moveCustomer(customerId, new Integer[] {0, position});
         int customerLeaving = fifoOutsideHall.in(customerId);

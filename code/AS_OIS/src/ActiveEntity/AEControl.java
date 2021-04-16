@@ -2,8 +2,10 @@
 
 package ActiveEntity;
 
+import Communication.Message;
+import Communication.Server;
 import SAIdle.IIdle_Control;
-import java.net.Socket;
+import java.net.SocketTimeoutException;
 
 /**
  * Esta entidade é responsável por fazer executar os comandos originados no OCC
@@ -15,19 +17,26 @@ public class AEControl extends Thread {
 
     private final IIdle_Control idle;
     
-    private final int nCustomers;
+    private int nCustomers;
     
-    public AEControl( IIdle_Control idle, int nCustomers /* mais áreas partilhadas */ ) {
+    final String host = "127.0.0.1";
+    final Integer OCCPort = 1200;
+    final Integer OISPort = 1300;
+    final Server server = new Server (OISPort);
+    private Message received;
+    private Message send;
+    
+    public AEControl( IIdle_Control idle /* mais áreas partilhadas */ ) {
         this.idle = idle;
-        this.nCustomers = nCustomers;
+        this.send = new Message("Ok");
     }
     
     /**public void start( int nCustomers, Socket socket ) {
         idle.start( nCustomers );
     }**/
     
-     public void start( int nCostumers ) {
-        idle.start( nCustomers );
+     public void start(int nCustomers) {
+        idle.start(nCustomers);
     }
     
     public void end() {
@@ -40,7 +49,32 @@ public class AEControl extends Thread {
     
     @Override
     public void run() {
-        start(nCustomers);
+        
+        // Reads messages from OCC and performs the corresponding actions
+        
+        server.start();
+        
+        Server serverX;
+        boolean waitconnection = true;
+        do {
+            try {
+                serverX = server.accept();
+                received = (Message) serverX.readObject();
+                switch(received.getType()){
+                    case "Start":
+                        start(received.getTnc());
+                        break;
+                    case "End":
+                        end();
+                    default:
+                        this.send = new Message("400 Bad Request.");
+                }
+                serverX.writeObject(send);
+                serverX.close();
+                    } catch (SocketTimeoutException ex) {}
+        } while(waitconnection);
+        
+        server.end();
         
     }
 }

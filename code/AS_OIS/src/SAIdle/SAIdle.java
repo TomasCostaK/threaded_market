@@ -20,11 +20,15 @@ public class SAIdle implements IIdle_Customer,
     
     private final ReentrantLock rl = new ReentrantLock( true );
     private final Condition notStarted;
+    private final Condition notChoosen;
     private boolean customerIdle;
+    private int nCustomers;
 
     public SAIdle() {
         this.notStarted = rl.newCondition(); 
+        this.notChoosen = rl.newCondition(); 
         this.customerIdle = true;
+        this.nCustomers = 10;
     }
     
     @Override
@@ -41,7 +45,12 @@ public class SAIdle implements IIdle_Customer,
             while (customerIdle == true) {
                 notStarted.await();
             }  
-            System.out.println("Customer " + customerId + " entering OutsideHall.");
+            if (customerId < this.nCustomers) {
+                System.out.println("Customer " + customerId + " entering OutsideHall.");
+            }
+            else {
+                notChoosen.await();
+            }   // customers que dos 99 não devem proseguir ficam aqui bloqueados
         }
         catch(InterruptedException ex)
         {
@@ -57,27 +66,35 @@ public class SAIdle implements IIdle_Customer,
         
     @Override
     public void start( int nCustomers ) {
+        setNCustomers(nCustomers);
         rl.lock();
         try {
             TimeUnit.SECONDS.sleep(5); // só para simular o user a dar start
             System.out.println("Start simulation...");
             customerIdle = false;
-            notStarted.signal();
+            notStarted.signalAll();
         } 
-        catch ( Exception ex ) {}
+        catch ( InterruptedException ex ) {}
         finally {
           rl.unlock();
         }
  
     }
     @Override
-    public void end() {   
+    public void end() { 
+        System.out.println("End Simulation");
+        
     }
     
     
     private long randomTimeout(){
         return new Random().nextInt(101);
     } 
+    
+    
+    public void setNCustomers(int nCustomers) {
+        this.nCustomers = nCustomers;
+    }
    
 }
 
