@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package SAEntranceHall;
+package SAPaymentHall;
 
 /**
  *
  * @author omp
  */
-public interface IEntranceHall_Control {
+public interface IPaymentHall_Control {
     
 }

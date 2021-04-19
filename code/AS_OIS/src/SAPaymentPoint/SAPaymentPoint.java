@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package SAPaymentHall;
+package SAPaymentPoint;
 import Communication.NotifyCustomerState;
 
 import FIFO.FIFO;
@@ -11,20 +11,20 @@ import Main.OIS_GUI;
 
 /**
  *
- * @author omp
+ * @author tomascosta
  */
-public class SAPaymentHall implements IPaymentHall_Customer,
-                                       IPaymentHall_Cashier,
-                                       IPaymentHall_Control {
+public class SAPaymentPoint implements IPaymentPoint_Customer,
+                                       IPaymentPoint_Cashier,
+                                       IPaymentPoint_Control {
     
-    final FIFO fifoPaymentHall;
+    final FIFO fifoPaymentBox;
     private int totalCustomers;
     private final OIS_GUI GUI;
     private final int customersPosition[];
     private final NotifyCustomerState notify;
 
-    public SAPaymentHall( int maxCustomers, OIS_GUI GUI, NotifyCustomerState notify ) {
-        this.fifoPaymentHall = new FIFO(maxCustomers);
+    public SAPaymentPoint( int maxCustomers, OIS_GUI GUI, NotifyCustomerState notify ) {
+        this.fifoPaymentBox = new FIFO(maxCustomers);
         this.GUI = GUI;
         this.totalCustomers = maxCustomers;
         this.customersPosition = new int[totalCustomers];
@@ -35,25 +35,21 @@ public class SAPaymentHall implements IPaymentHall_Customer,
     }
     
     @Override
-    public void call() {
+    public void process() {
         while (true) {
-            fifoPaymentHall.out();
+            fifoPaymentBox.out();
         }
     }
 
     @Override
     public void in(int customerId) {
-        notify.sendCustomerState("PaymentHall", customerId);
+        notify.sendCustomerState("PaymentPoint", customerId);
         int position = this.selectPositionInGUI(customerId);
         GUI.moveCustomer(customerId, new Integer[] {1, position});
-        int customerLeaving = fifoPaymentHall.in(customerId);
-        System.out.println("Customer " + customerLeaving + " leaving PaymentHall.");   
+        int customerLeaving = fifoPaymentBox.in(customerId);
+        System.out.println("Customer " + customerLeaving + " leaving store.");   
     }
     
-    @Override
-    public void notifyCashier() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
    
     private int selectPositionInGUI(int customerId){
         int position = (int) Math.round((Math.random() * (totalCustomers - 1)));

@@ -14,7 +14,6 @@ import Main.OIS_GUI;
  * @author omp
  */
 public class SACorridorHall implements ICorridorHall_Customer,
-                                       ICorridorHall_Manager,
                                        ICorridorHall_Control {
     
     final FIFO fifoCorridorHall;

@@ -9,7 +9,7 @@ package SAIdle;
  *
  * @author omp
  */
-public interface IIdle_Manager {
+public interface IIdle_Cashier {
     public void idle();
     
 }

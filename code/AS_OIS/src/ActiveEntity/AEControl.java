@@ -5,6 +5,11 @@ package ActiveEntity;
 import Communication.Message;
 import Communication.Server;
 import SAIdle.IIdle_Control;
+import SACorridor.ICorridor_Control;
+import SACorridorHall.ICorridorHall_Control;
+import SAEntranceHall.IEntranceHall_Control;
+import SAOutsideHall.IOutsideHall_Control;
+import SAPaymentHall.IPaymentHall_Control;
 import java.net.SocketTimeoutException;
 
 /**

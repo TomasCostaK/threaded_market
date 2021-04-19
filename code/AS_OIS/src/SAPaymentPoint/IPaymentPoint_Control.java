@@ -3,13 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package SAPaymentHall;
+package SAPaymentPoint;
+
+import SAPaymentHall.*;
 
 /**
  *
- * @author omp
+ * @author tomascosta
  */
-public interface IPaymentHall_Customer {
-    public void in( int customerId );
-    public void notifyCashier ();
+public interface IPaymentPoint_Control {
+    
 }

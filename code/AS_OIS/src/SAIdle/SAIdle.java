@@ -17,7 +17,8 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class SAIdle implements IIdle_Customer,
                                IIdle_Manager,
-                               IIdle_Control {
+                               IIdle_Control,
+                               IIdle_Cashier {
     
     private final ReentrantLock rl = new ReentrantLock( true );
     private final Condition notStarted;
