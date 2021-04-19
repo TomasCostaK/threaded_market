@@ -481,7 +481,7 @@ public class OCC_GUI extends javax.swing.JFrame {
         state9.setFont(new java.awt.Font("Ubuntu", 1, 18)); // NOI18N
         state9.setForeground(new java.awt.Color(19, 19, 7));
         state9.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        state9.setText("9");
+        state9.setText("8");
         state9.setOpaque(true);
 
         state11.setBackground(new java.awt.Color(70, 158, 187));
@@ -1518,7 +1518,7 @@ public class OCC_GUI extends javax.swing.JFrame {
         legend8.setOpaque(true);
 
         jLabel18.setForeground(new java.awt.Color(17, 17, 8));
-        jLabel18.setText("Dead");
+        jLabel18.setText("Terminated");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);

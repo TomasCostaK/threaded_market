@@ -7,6 +7,7 @@ package SAIdle;
 
 import Main.OIS_GUI;
 import java.util.Random;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -23,6 +24,7 @@ public class SAIdle implements IIdle_Customer,
     private final Condition notChoosen;
     private boolean customerIdle;
     private int nCustomers;
+    private ArrayList<Integer> orderedCustomers = new ArrayList<Integer>();;
 
     public SAIdle() {
         this.notStarted = rl.newCondition(); 
@@ -47,6 +49,8 @@ public class SAIdle implements IIdle_Customer,
             }  
             if (customerId < this.nCustomers) {
                 System.out.println("Customer " + customerId + " entering OutsideHall.");
+                //orderedCustomers.set(customerId, customerId);
+                //System.out.println("Customers Array: " + orderedCustomers);
             }
             else {
                 notChoosen.await();

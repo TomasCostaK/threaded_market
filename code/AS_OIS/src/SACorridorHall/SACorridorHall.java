@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package SAEntranceHall;
+package SACorridorHall;
 import Communication.NotifyCustomerState;
 
 import FIFO.FIFO;
@@ -13,18 +13,18 @@ import Main.OIS_GUI;
  *
  * @author omp
  */
-public class SAEntranceHall implements IEntranceHall_Customer,
-                                       IEntranceHall_Manager,
-                                       IEntranceHall_Control {
+public class SACorridorHall implements ICorridorHall_Customer,
+                                       ICorridorHall_Manager,
+                                       ICorridorHall_Control {
     
-    final FIFO fifoEntranceHall;
+    final FIFO fifoCorridorHall;
     private int totalCustomers;
     private final OIS_GUI GUI;
     private final int customersPosition[];
     private final NotifyCustomerState notify;
 
-    public SAEntranceHall( int maxCustomers, OIS_GUI GUI, NotifyCustomerState notify ) {
-        this.fifoEntranceHall = new FIFO(maxCustomers);
+    public SACorridorHall( int maxCustomers, OIS_GUI GUI, NotifyCustomerState notify ) {
+        this.fifoCorridorHall = new FIFO(maxCustomers);
         this.GUI = GUI;
         this.totalCustomers = maxCustomers;
         this.customersPosition = new int[totalCustomers];
@@ -37,17 +37,17 @@ public class SAEntranceHall implements IEntranceHall_Customer,
     @Override
     public void call() {
         while (true) {
-            fifoEntranceHall.out();
+            fifoCorridorHall.out();
         }
     }
 
     @Override
     public void in(int customerId) {
-        notify.sendCustomerState("EntranceHall", customerId);
+        notify.sendCustomerState("CorridorHall", customerId);
         int position = this.selectPositionInGUI(customerId);
         GUI.moveCustomer(customerId, new Integer[] {1, position});
-        int customerLeaving = fifoEntranceHall.in(customerId);
-        System.out.println("Customer " + customerLeaving + " leaving EntranceHall.");   
+        int customerLeaving = fifoCorridorHall.in(customerId);
+        System.out.println("Customer " + customerLeaving + " leaving CorridorHall.");   
     }
    
     private int selectPositionInGUI(int customerId){
