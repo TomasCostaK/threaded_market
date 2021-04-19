@@ -11,5 +11,4 @@ package SACorridorHall;
  * @author omp
  */
 public interface ICorridorHall_Manager {
-    public void call();
 }

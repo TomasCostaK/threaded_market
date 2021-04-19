@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package SACorridorHall;
+package SACorridor;
 import Communication.NotifyCustomerState;
 
 import FIFO.FIFO;
@@ -13,18 +13,17 @@ import Main.OIS_GUI;
  *
  * @author omp
  */
-public class SACorridorHall implements ICorridorHall_Customer,
-                                       ICorridorHall_Manager,
-                                       ICorridorHall_Control {
+public class SACorridor implements ICorridor_Customer,
+                                       ICorridor_Control {
     
-    final FIFO fifoCorridorHall;
+    final FIFO fifoCorridor;
     private int totalCustomers;
     private final OIS_GUI GUI;
     private final int customersPosition[];
     private final NotifyCustomerState notify;
 
-    public SACorridorHall( int maxCustomers, OIS_GUI GUI, NotifyCustomerState notify ) {
-        this.fifoCorridorHall = new FIFO(maxCustomers);
+    public SACorridor( int maxCustomers, OIS_GUI GUI, NotifyCustomerState notify ) {
+        this.fifoCorridor = new FIFO(maxCustomers);
         this.GUI = GUI;
         this.totalCustomers = maxCustomers;
         this.customersPosition = new int[totalCustomers];
@@ -37,26 +36,33 @@ public class SACorridorHall implements ICorridorHall_Customer,
 
     @Override
     public void in(int customerId) {
-        notify.sendCustomerState("CorridorHall", customerId);
+        notify.sendCustomerState("Corridor", customerId);
         int position = this.selectPositionInGUI(customerId);
         GUI.moveCustomer(customerId, new Integer[] {1, position});
-        int customerLeaving = fifoCorridorHall.in(customerId);
-        System.out.println("Customer " + customerLeaving + " leaving CorridorHall.");   
+        int customerLeaving = fifoCorridor.in(customerId);
+        System.out.println("Customer " + customerLeaving + " leaving Corridor.");   
     }
     
     @Override
     public void out() {
         // before leaving, awaits checking if corridor is clear
         while (true) {
-            fifoCorridorHall.out();
+            fifoCorridor.out();
         }
     }
 
+    // Check if there is no one in front of the customer, so they dont advance to the same tile
     @Override
-    public void checkCorridor() {
+    public void checkTreadmill() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-   
+
+    // Blocking condition, keeps moving forward until checkTreadmill returns that there is someone in front
+    @Override
+    public void forward() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
     private int selectPositionInGUI(int customerId){
         int position = (int) Math.round((Math.random() * (totalCustomers - 1)));
        
@@ -65,5 +71,7 @@ public class SACorridorHall implements ICorridorHall_Customer,
         customersPosition[position] = customerId;
         return position;
     } 
+
+
 
 }

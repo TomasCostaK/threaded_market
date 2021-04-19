@@ -3,16 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package SACorridorHall;
+package SACorridor;
 
+import SACorridorHall.*;
 import SAEntranceHall.*;
 
 /**
  *
  * @author omp
  */
-public interface ICorridorHall_Customer {
+public interface ICorridor_Customer {
     public void in( int customerId );
     public void out();
-    public void checkCorridor();
+    public void checkTreadmill();
+    public void forward();
 }
