@@ -53,14 +53,11 @@ public class AECustomer extends Thread {
                 idle.idle(customerId );
                 // se simulação activa (não suspend, não stop, não end), thread avança para o outsideHall
                 outsideHall.in( customerId );
-                TimeUnit.SECONDS.sleep(5); 
+                TimeUnit.SECONDS.sleep(3); 
                 entranceHall.in( customerId );
-                TimeUnit.SECONDS.sleep(5);
-                corridorHall.in( customerId );
-                TimeUnit.SECONDS.sleep(5);
-                corridor.in(customerId);
-                paymentHall.in(customerId);
-                paymentPoint.in(customerId);
+                corridorHall.in(customerId);
+                
+
             }
             catch ( Exception ex ) {}
         }

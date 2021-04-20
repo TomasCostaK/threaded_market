@@ -14,6 +14,9 @@ public class OIS_GUI extends javax.swing.JFrame {
     
     private javax.swing.JLabel[] out;
     private javax.swing.JLabel[] ent;
+    private javax.swing.JLabel[] corridorHall1;
+    private javax.swing.JLabel[] corridorHall2;
+    private javax.swing.JLabel[] corridorHall3;
     private HashMap<Integer, Integer[]> customerPosition;
 
     public OIS_GUI() {
@@ -29,6 +32,9 @@ public class OIS_GUI extends javax.swing.JFrame {
                                         out81,out82,out83,out84,out85,out86,out87,out88,out89,out90,
                                         out91,out92,out93,out94,out95,out96,out97,out98,out99};
         ent = new javax.swing.JLabel[] {ent1, ent2, ent3, ent4, ent5, ent6};
+        corridorHall1 = new javax.swing.JLabel[] {corr1,corr2,corr3};
+        corridorHall2 = new javax.swing.JLabel[] {corr4,corr5,corr6};
+        corridorHall3 = new javax.swing.JLabel[] {corr7,corr8,corr9};
         customerPosition = new HashMap<>();
     }
     
@@ -44,7 +50,12 @@ public class OIS_GUI extends javax.swing.JFrame {
                 case 1:
                     ent[customerPosition.get(customerId)[1]].setText("");
                     break;
-            }
+                case 2:
+                    corridorHall1[customerPosition.get(customerId)[1]].setText("");
+                case 3:
+                    corridorHall2[customerPosition.get(customerId)[1]].setText("");     
+                case 4:
+                    corridorHall3[customerPosition.get(customerId)[1]].setText("");}
 
             switch(position[0]){
                 case 0:
@@ -52,6 +63,15 @@ public class OIS_GUI extends javax.swing.JFrame {
                     break;
                 case 1:
                     ent[position[1]].setText(customerId+"");
+                    break;
+                case 2:
+                    corridorHall1[position[1]].setText(customerId+"");
+                    break;
+                case 3:
+                    corridorHall2[position[1]].setText(customerId+"");
+                    break;
+                case 4:
+                    corridorHall3[position[1]].setText(customerId+"");
                     break;
             }
         }

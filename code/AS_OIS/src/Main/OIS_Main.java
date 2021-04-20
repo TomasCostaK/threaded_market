@@ -26,7 +26,6 @@ public class OIS_Main {
     
      public static void main(String args[]) {
         final int MAX_CUSTOMERS =  99;
-        final int N_CORRIDOR_HALL = 3;
         final int N_CORRIDOR = 3;
         final int SIZE_ENTRANCE_HALL = 6;
         final int SIZE_CORRIDOR_HALL = 3;
@@ -37,21 +36,29 @@ public class OIS_Main {
         final NotifyCustomerState notify = new NotifyCustomerState();
         final OIS_GUI GUI = new OIS_GUI();
         final SAIdle idle = new SAIdle();
-        final SAOutsideHall outsideHall =  new SAOutsideHall( MAX_CUSTOMERS, GUI, notify );
-        final SAEntranceHall entranceHall = new SAEntranceHall ( SIZE_ENTRANCE_HALL, GUI, notify );
-        final SACorridorHall[] corridorHalls = new SACorridorHall[N_CORRIDOR];
+        
         final SACorridor[] corridors = new SACorridor[N_CORRIDOR];
-        final SAPaymentHall paymentHall = new SAPaymentHall ( SIZE_PAYMENT_HALL, GUI, notify );
-        final SAPaymentPoint paymentPoint = new SAPaymentPoint (SIZE_PAYMENT_BOX, GUI, notify);
+        
+        final SACorridorHall[] corridorHalls = new SACorridorHall[N_CORRIDOR];
         
         // create N_CORRIDORS Halls and N Corridors, we get ordered corridor halls, corresponding to the given corridor
         for(int i=0; i<N_CORRIDOR; i++){
-            SACorridorHall corridor_hall = new SACorridorHall( SIZE_CORRIDOR_HALL, GUI, notify);
+            SACorridorHall corridor_hall = new SACorridorHall( SIZE_CORRIDOR_HALL, GUI, notify,2+i);
             corridorHalls[i] = corridor_hall;
             
             SACorridor corridor = new SACorridor( SIZE_CORRIDOR, GUI, notify);
             corridors[i] = corridor;
         }
+        
+        
+        final SAEntranceHall entranceHall = new SAEntranceHall ( SIZE_ENTRANCE_HALL, GUI, notify, corridorHalls );
+        final SAOutsideHall outsideHall =  new SAOutsideHall( MAX_CUSTOMERS, GUI, notify, entranceHall );
+        
+
+        final SAPaymentHall paymentHall = new SAPaymentHall ( SIZE_PAYMENT_HALL, GUI, notify );
+        final SAPaymentPoint paymentPoint = new SAPaymentPoint (SIZE_PAYMENT_BOX, GUI, notify);
+        
+
 
         final AECustomer[] aeCustomer = new AECustomer[ MAX_CUSTOMERS ];
         final AEControl control = new AEControl( (IIdle_Control) idle);

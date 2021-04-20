@@ -36,8 +36,8 @@ public class AEManager extends Thread { // id do customer
                 idle.idle();
                 // se simulação activa (não suspend, não stop, não end), thread avança para o outsideHall
                 while(true){
-                 outsideHall.call();
-                 entranceHall.call();
+                    outsideHall.call();
+                    entranceHall.call();
                 }
                 // mais
             }

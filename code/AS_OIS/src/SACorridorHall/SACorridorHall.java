@@ -21,8 +21,9 @@ public class SACorridorHall implements ICorridorHall_Customer,
     private final OIS_GUI GUI;
     private final int customersPosition[];
     private final NotifyCustomerState notify;
+    private final int id;
 
-    public SACorridorHall( int maxCustomers, OIS_GUI GUI, NotifyCustomerState notify ) {
+    public SACorridorHall( int maxCustomers, OIS_GUI GUI, NotifyCustomerState notify, int id ) {
         this.fifoCorridorHall = new FIFO(maxCustomers);
         this.GUI = GUI;
         this.totalCustomers = maxCustomers;
@@ -31,6 +32,7 @@ public class SACorridorHall implements ICorridorHall_Customer,
             this.customersPosition[i] = -1;
         }
         this.notify = notify;
+        this.id = id;
     }
     
 
@@ -38,7 +40,7 @@ public class SACorridorHall implements ICorridorHall_Customer,
     public void in(int customerId) {
         notify.sendCustomerState("CorridorHall", customerId);
         int position = this.selectPositionInGUI(customerId);
-        GUI.moveCustomer(customerId, new Integer[] {1, position});
+        GUI.moveCustomer(customerId, new Integer[] {id, position});
         int customerLeaving = fifoCorridorHall.in(customerId);
         System.out.println("Customer " + customerLeaving + " leaving CorridorHall.");   
     }
@@ -57,12 +59,21 @@ public class SACorridorHall implements ICorridorHall_Customer,
     }
    
     private int selectPositionInGUI(int customerId){
+        
         int position = (int) Math.round((Math.random() * (totalCustomers - 1)));
        
         while(customersPosition[position] != -1) position = (int) Math.round((Math.random() * (totalCustomers - 1)));
        
         customersPosition[position] = customerId;
+        
+        System.out.println(position);
         return position;
+        
+        
     } 
+    
+       public FIFO getFifoCorridorHall() {
+        return this.fifoCorridorHall;
+    }
 
 }

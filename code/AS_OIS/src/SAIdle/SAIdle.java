@@ -36,7 +36,7 @@ public class SAIdle implements IIdle_Customer,
     
     @Override
     public void idle() {
-        System.out.println("Manager idle.");
+        //System.out.println("Manager idle.");
     }
     
     // idle Customer
@@ -49,7 +49,7 @@ public class SAIdle implements IIdle_Customer,
                 notStarted.await();
             }  
             if (customerId < this.nCustomers) {
-                System.out.println("Customer " + customerId + " entering OutsideHall.");
+                //System.out.println("Customer " + customerId + " entering OutsideHall.");
                 //orderedCustomers.set(customerId, customerId);
                 //System.out.println("Customers Array: " + orderedCustomers);
             }

@@ -167,4 +167,8 @@ public class FIFO implements IFIFO {
         return count;
     }
     
+    public int getMaxCustomers() {
+        return maxCustomers;
+    }
+    
 }

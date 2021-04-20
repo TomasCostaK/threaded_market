@@ -9,6 +9,7 @@ import ActiveEntity.AEControl;
 import Communication.NotifyCustomerState;
 import FIFO.FIFO;
 import Main.OIS_GUI;
+import SAEntranceHall.SAEntranceHall;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
@@ -23,6 +24,7 @@ public class SAOutsideHall implements IOutsideHall_Manager,
                                       IOutsideHall_Control {
     
     final FIFO fifoOutsideHall;
+    private final SAEntranceHall entranceHall;
     private final ReentrantLock rl = new ReentrantLock( true );
     private final Condition customerNotIn;
     private boolean managerWaiting;
@@ -32,7 +34,7 @@ public class SAOutsideHall implements IOutsideHall_Manager,
     private final NotifyCustomerState notify;
     
 
-    public SAOutsideHall( int totalCustomers, OIS_GUI GUI, NotifyCustomerState notify) {
+    public SAOutsideHall( int totalCustomers, OIS_GUI GUI, NotifyCustomerState notify, SAEntranceHall entranceHall) {
         this.totalCustomers = totalCustomers;
         this.GUI = GUI;
         this.fifoOutsideHall = new FIFO(totalCustomers); 
@@ -43,6 +45,7 @@ public class SAOutsideHall implements IOutsideHall_Manager,
             this.customersPosition[i] = -1;
         }
         this.notify = notify;
+        this.entranceHall = entranceHall;
     } 
 
     @Override
@@ -51,18 +54,20 @@ public class SAOutsideHall implements IOutsideHall_Manager,
         int position = this.selectPositionInGUI(customerId);
         GUI.moveCustomer(customerId, new Integer[] {0, position});
         int customerLeaving = fifoOutsideHall.in(customerId);
-        System.out.println("Customer " + customerLeaving + " leaving OutsideHall.");    
+        //System.out.println("Customer " + customerLeaving + " leaving OutsideHall.");    
     }
     
     
     @Override
     public void call() {
-        while (true) {
-            System.out.println("FIFO Outside: " + fifoOutsideHall.getCount());
-            fifoOutsideHall.out();
-            break;
+        try {
+            while (entranceHall.getFifoEntranceHall().getCount() < entranceHall.getFifoEntranceHall().getMaxCustomers() - 1) {
+                //System.out.println("FIFO Outside: " + fifoOutsideHall.getCount());
+                fifoOutsideHall.out();
+                Thread.sleep(2000);
+            }
         }
-    }
+        catch(Exception e) {}    }
     
     
     private long randomTimeout(){
