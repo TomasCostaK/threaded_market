@@ -37,7 +37,9 @@ public class SAEntranceHall implements IEntranceHall_Customer,
     @Override
     public void call() {
         while (true) {
+            System.out.println("FIFO Entrance: " + fifoEntranceHall.getCount());
             fifoEntranceHall.out();
+            break;
         }
     }
 

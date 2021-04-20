@@ -58,7 +58,9 @@ public class SAOutsideHall implements IOutsideHall_Manager,
     @Override
     public void call() {
         while (true) {
+            System.out.println("FIFO Outside: " + fifoOutsideHall.getCount());
             fifoOutsideHall.out();
+            break;
         }
     }
     

@@ -8,6 +8,7 @@ package ActiveEntity;
 import SAEntranceHall.IEntranceHall_Manager;
 import SAIdle.IIdle_Manager;
 import SAOutsideHall.IOutsideHall_Manager;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -30,12 +31,18 @@ public class AEManager extends Thread { // id do customer
     @Override
     public void run() {
         while ( true ) {
-            // thread avança para Idle
-            idle.idle();
-            // se simulação activa (não suspend, não stop, não end), thread avança para o outsideHall
-            outsideHall.call();
-            entranceHall.call();
-            // mais
+            try{
+                // thread avança para Idle
+                idle.idle();
+                // se simulação activa (não suspend, não stop, não end), thread avança para o outsideHall
+                while(true){
+                 outsideHall.call();
+                 entranceHall.call();
+                }
+                // mais
+            }
+            catch(Exception e) {}
+            
         }
     }
     

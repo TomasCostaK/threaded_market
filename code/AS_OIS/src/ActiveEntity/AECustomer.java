@@ -55,7 +55,9 @@ public class AECustomer extends Thread {
                 outsideHall.in( customerId );
                 TimeUnit.SECONDS.sleep(5); 
                 entranceHall.in( customerId );
+                TimeUnit.SECONDS.sleep(5);
                 corridorHall.in( customerId );
+                TimeUnit.SECONDS.sleep(5);
                 corridor.in(customerId);
                 paymentHall.in(customerId);
                 paymentPoint.in(customerId);
