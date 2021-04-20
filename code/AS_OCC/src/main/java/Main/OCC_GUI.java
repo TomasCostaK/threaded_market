@@ -48,6 +48,18 @@ public class OCC_GUI extends javax.swing.JFrame {
         switch (state) {
             case "OutsideHall":
                 states[idCustomer].setBackground(Color.green);
+            case "EntranceHall":
+                states[idCustomer].setBackground(Color.pink);
+            case "CorridorHall":
+                states[idCustomer].setBackground(Color.orange);
+            case "Corridor":
+                states[idCustomer].setBackground(Color.yellow);
+            case "PaymentHall":
+                states[idCustomer].setBackground(Color.magenta);
+            case "PaymentPoint":
+                states[idCustomer].setBackground(Color.gray);
+            case "Terminated":
+                states[idCustomer].setBackground(Color.red);
         }   
     }
 
