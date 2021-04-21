@@ -61,8 +61,8 @@ public class SAOutsideHall implements IOutsideHall_Manager,
     @Override
     public void call() {
         try {
-            while (entranceHall.getFifoEntranceHall().getCount() < entranceHall.getFifoEntranceHall().getMaxCustomers() - 1) {
-                //System.out.println("FIFO Outside: " + fifoOutsideHall.getCount());
+            while (entranceHall.getFifoEntranceHall().getCount() < entranceHall.getFifoEntranceHall().getMaxCustomers() - 1 && fifoOutsideHall.getCount() > 0) {
+                System.out.println("FIFO Outside: " + fifoOutsideHall.getCount());
                 fifoOutsideHall.out();
                 Thread.sleep(2000);
             }

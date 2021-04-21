@@ -7,6 +7,7 @@ package SACorridor;
 import Communication.NotifyCustomerState;
 
 import FIFO.FIFO;
+import FIFO.Queue;
 import Main.OIS_GUI;
 
 /**
@@ -16,20 +17,22 @@ import Main.OIS_GUI;
 public class SACorridor implements ICorridor_Customer,
                                        ICorridor_Control {
     
-    final FIFO fifoCorridor;
+    final Queue fifoCorridor;
     private int totalCustomers;
     private final OIS_GUI GUI;
     private final int customersPosition[];
     private final NotifyCustomerState notify;
+    private final int id;
 
-    public SACorridor( int maxCustomers, OIS_GUI GUI, NotifyCustomerState notify ) {
-        this.fifoCorridor = new FIFO(maxCustomers);
+    public SACorridor( int maxCustomers, OIS_GUI GUI, NotifyCustomerState notify, int id ) {
+        this.fifoCorridor = new Queue<Integer>(maxCustomers);
         this.GUI = GUI;
         this.totalCustomers = maxCustomers;
         this.customersPosition = new int[totalCustomers];
         for(int i = 0; i < totalCustomers; i ++){
             this.customersPosition[i] = -1;
         }
+        this.id = id;
         this.notify = notify;
     }
     
@@ -38,14 +41,13 @@ public class SACorridor implements ICorridor_Customer,
     public void in(int customerId) {
         notify.sendCustomerState("Corridor", customerId);
         int position = this.selectPositionInGUI(customerId);
-        GUI.moveCustomer(customerId, new Integer[] {1, position});
-        int customerLeaving = fifoCorridor.in(customerId);
-        System.out.println("Customer " + customerLeaving + " leaving Corridor.");   
+        GUI.moveCustomer(customerId, new Integer[] {id, position});
+        fifoCorridor.in(customerId);
     }
     
     @Override
     public void out() {
-        // before leaving, awaits checking if corridor is clear
+        // While there is space in the corridor queue, go for it
         while (true) {
             fifoCorridor.out();
         }
@@ -72,6 +74,8 @@ public class SACorridor implements ICorridor_Customer,
         return position;
     } 
 
-
+    public Queue getFifoCorridor() {
+        return this.fifoCorridor;
+    }
 
 }

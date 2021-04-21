@@ -17,6 +17,9 @@ public class OIS_GUI extends javax.swing.JFrame {
     private javax.swing.JLabel[] corridorHall1;
     private javax.swing.JLabel[] corridorHall2;
     private javax.swing.JLabel[] corridorHall3;
+    private javax.swing.JLabel[] corridor1;
+    private javax.swing.JLabel[] corridor2;
+    private javax.swing.JLabel[] corridor3;
     private HashMap<Integer, Integer[]> customerPosition;
 
     public OIS_GUI() {
@@ -35,6 +38,9 @@ public class OIS_GUI extends javax.swing.JFrame {
         corridorHall1 = new javax.swing.JLabel[] {corr1,corr2,corr3};
         corridorHall2 = new javax.swing.JLabel[] {corr4,corr5,corr6};
         corridorHall3 = new javax.swing.JLabel[] {corr7,corr8,corr9};
+        corridor1 = new javax.swing.JLabel[] {corridor1_1,corridor1_2,corridor1_3, corridor1_4,corridor1_5,corridor1_6, corridor1_7,corridor1_8,corridor1_9, corridor1_10};
+        corridor2 = new javax.swing.JLabel[] {corridor1_11,corridor1_12,corridor1_13, corridor1_14,corridor1_15,corridor1_16, corridor1_17,corridor1_18,corridor1_19, corridor1_20};
+        corridor3 = new javax.swing.JLabel[] {corridor1_21,corridor1_22,corridor1_23, corridor1_24,corridor1_25,corridor1_26, corridor1_27,corridor1_28,corridor1_29, corridor1_30};
         customerPosition = new HashMap<>();
     }
     
@@ -52,10 +58,24 @@ public class OIS_GUI extends javax.swing.JFrame {
                     break;
                 case 2:
                     corridorHall1[customerPosition.get(customerId)[1]].setText("");
+                    break;
                 case 3:
-                    corridorHall2[customerPosition.get(customerId)[1]].setText("");     
+                    corridorHall2[customerPosition.get(customerId)[1]].setText("");    
+                    break;
                 case 4:
-                    corridorHall3[customerPosition.get(customerId)[1]].setText("");}
+                    corridorHall3[customerPosition.get(customerId)[1]].setText("");
+                    break;
+                case 5:
+                    corridor1[customerPosition.get(customerId)[1]].setText("");
+                    break;
+                case 6:
+                    corridor2[customerPosition.get(customerId)[1]].setText("");
+                    break;
+                case 7:
+                    corridor3[customerPosition.get(customerId)[1]].setText("");
+                    break;
+       
+                }
 
             switch(position[0]){
                 case 0:
@@ -73,6 +93,16 @@ public class OIS_GUI extends javax.swing.JFrame {
                 case 4:
                     corridorHall3[position[1]].setText(customerId+"");
                     break;
+                case 5:
+                    corridor1[position[1]].setText(customerId+"");
+                    break;
+                case 6:
+                    corridor2[position[1]].setText(customerId+"");
+                    break;
+                case 7:
+                    corridor3[position[1]].setText(customerId+"");
+                    break;
+       
             }
         }
         else{

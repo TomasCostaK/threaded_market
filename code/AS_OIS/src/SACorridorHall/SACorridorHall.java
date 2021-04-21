@@ -7,7 +7,9 @@ package SACorridorHall;
 import Communication.NotifyCustomerState;
 
 import FIFO.FIFO;
+import FIFO.Queue;
 import Main.OIS_GUI;
+import SACorridor.SACorridor;
 
 /**
  *
@@ -16,15 +18,16 @@ import Main.OIS_GUI;
 public class SACorridorHall implements ICorridorHall_Customer,
                                        ICorridorHall_Control {
     
-    final FIFO fifoCorridorHall;
+    final Queue fifoCorridorHall;
     private int totalCustomers;
     private final OIS_GUI GUI;
     private final int customersPosition[];
     private final NotifyCustomerState notify;
     private final int id;
+    private final SACorridor corridor;
 
-    public SACorridorHall( int maxCustomers, OIS_GUI GUI, NotifyCustomerState notify, int id ) {
-        this.fifoCorridorHall = new FIFO(maxCustomers);
+    public SACorridorHall( int maxCustomers, OIS_GUI GUI, NotifyCustomerState notify, int id , SACorridor corridor) {
+        this.fifoCorridorHall = new Queue<Integer>(maxCustomers);
         this.GUI = GUI;
         this.totalCustomers = maxCustomers;
         this.customersPosition = new int[totalCustomers];
@@ -33,6 +36,7 @@ public class SACorridorHall implements ICorridorHall_Customer,
         }
         this.notify = notify;
         this.id = id;
+        this.corridor = corridor;
     }
     
 
@@ -41,21 +45,28 @@ public class SACorridorHall implements ICorridorHall_Customer,
         notify.sendCustomerState("CorridorHall", customerId);
         int position = this.selectPositionInGUI(customerId);
         GUI.moveCustomer(customerId, new Integer[] {id, position});
-        int customerLeaving = fifoCorridorHall.in(customerId);
-        System.out.println("Customer " + customerLeaving + " leaving CorridorHall.");   
+        fifoCorridorHall.in(customerId);
     }
     
     @Override
     public void out() {
         // before leaving, awaits checking if corridor is clear
-        while (true) {
-            fifoCorridorHall.out();
+        while (checkCorridor() == false) {
+            try {
+                System.out.println("No space in corridor; Sleeping.");
+                Thread.sleep(2500);
+            } catch (Exception e){
+                System.out.println("Thread failed to sleep");
+            }
+
         }
+        fifoCorridorHall.out();
+        System.out.println("Customer leaving CorridorHall.");
     }
 
     @Override
-    public void checkCorridor() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean checkCorridor() {
+        return corridor.getFifoCorridor().hasSpace();
     }
    
     private int selectPositionInGUI(int customerId){
@@ -72,7 +83,7 @@ public class SACorridorHall implements ICorridorHall_Customer,
         
     } 
     
-       public FIFO getFifoCorridorHall() {
+    public Queue getFifoCorridorHall() {
         return this.fifoCorridorHall;
     }
 

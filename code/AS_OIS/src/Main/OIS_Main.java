@@ -43,11 +43,13 @@ public class OIS_Main {
         
         // create N_CORRIDORS Halls and N Corridors, we get ordered corridor halls, corresponding to the given corridor
         for(int i=0; i<N_CORRIDOR; i++){
-            SACorridorHall corridor_hall = new SACorridorHall( SIZE_CORRIDOR_HALL, GUI, notify,2+i);
-            corridorHalls[i] = corridor_hall;
-            
-            SACorridor corridor = new SACorridor( SIZE_CORRIDOR, GUI, notify);
+                        
+            SACorridor corridor = new SACorridor( SIZE_CORRIDOR, GUI, notify, 5+i);
             corridors[i] = corridor;
+            
+            SACorridorHall corridor_hall = new SACorridorHall( SIZE_CORRIDOR_HALL, GUI, notify,2+i, corridor);
+            corridorHalls[i] = corridor_hall;
+
         }
         
         

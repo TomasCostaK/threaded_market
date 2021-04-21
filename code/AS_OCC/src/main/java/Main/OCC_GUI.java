@@ -45,7 +45,7 @@ public class OCC_GUI extends javax.swing.JFrame {
     }
     
     public void changeState(int idCustomer, String state) {
-        System.out.println(state);
+        System.out.println("Customer " + idCustomer + " is now in " +state);
         switch (state) {
             case "EntranceHall":
                 states[idCustomer].setBackground(Color.magenta);

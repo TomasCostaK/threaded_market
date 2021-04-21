@@ -40,18 +40,29 @@ public class SAEntranceHall implements IEntranceHall_Customer,
     @Override
     public void call() {
         try {
-            while (corridorHalls[0].getFifoCorridorHall().getCount() < corridorHalls[0].getFifoCorridorHall().getMaxCustomers() - 1) {
-                fifoEntranceHall.out();
-                Thread.sleep(2000);
-            }
-            System.out.println("next corridor hall");
-            while (corridorHalls[1].getFifoCorridorHall().getCount() < corridorHalls[1].getFifoCorridorHall().getMaxCustomers() - 1) {
-                fifoEntranceHall.out();
-                Thread.sleep(2000);
-            }
-            while (corridorHalls[2].getFifoCorridorHall().getCount() < corridorHalls[2].getFifoCorridorHall().getMaxCustomers() - 1) {
-                fifoEntranceHall.out();
-                Thread.sleep(2000);
+            while (true) {
+                if (fifoEntranceHall.getCount() < 1) {
+                    Thread.sleep(2000);
+                    return;
+                }
+
+                if (corridorHalls[0].getFifoCorridorHall().hasSpace()) {
+                    fifoEntranceHall.out();
+                    Thread.sleep(2000);
+                    continue;
+                }
+                System.out.println("Going for corridor 2");
+                if (corridorHalls[1].getFifoCorridorHall().hasSpace()) {
+                    fifoEntranceHall.out();
+                    Thread.sleep(2000);
+                    continue;
+                }
+                System.out.println("Going for corridor 3");
+                if (corridorHalls[2].getFifoCorridorHall().hasSpace()) {
+                    fifoEntranceHall.out();
+                    Thread.sleep(2000);;
+                    continue;
+                }
             }
         }
         catch(Exception e) {}    

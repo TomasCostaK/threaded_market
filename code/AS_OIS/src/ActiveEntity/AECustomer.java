@@ -56,8 +56,15 @@ public class AECustomer extends Thread {
                 TimeUnit.SECONDS.sleep(3); 
                 entranceHall.in( customerId );
                 corridorHall.in(customerId);
+                TimeUnit.SECONDS.sleep(2);
                 
-
+                corridorHall.out();
+                corridor.in(customerId);
+                //TimeUnit.SECONDS.sleep(2);
+                //corridor.out();
+                
+                
+                //idle.idle(customerId );
             }
             catch ( Exception ex ) {}
         }
