@@ -5,7 +5,6 @@
  */
 package SAIdle;
 
-import Main.OIS_GUI;
 import java.util.Random;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -22,16 +21,22 @@ public class SAIdle implements IIdle_Customer,
     
     private final ReentrantLock rl = new ReentrantLock( true );
     private final Condition notStarted;
+    private final Condition notNext;
     private final Condition notChoosen;
     private boolean customerIdle;
     private int nCustomers;
-    private ArrayList<Integer> orderedCustomers = new ArrayList<Integer>();;
+    private ArrayList<Integer> orderedCustomers = new ArrayList<Integer>();
+    private int cto;
+    private int previousCustomerId;
 
     public SAIdle() {
         this.notStarted = rl.newCondition(); 
         this.notChoosen = rl.newCondition(); 
+        this.notNext = rl.newCondition();
         this.customerIdle = true;
         this.nCustomers = 10;
+        this.cto = 0;
+        this.previousCustomerId = -1;
     }
     
     @Override
@@ -41,21 +46,29 @@ public class SAIdle implements IIdle_Customer,
     
     // idle Customer
     @Override
-    public void idle( int customerId ) {
+    public int idle( int customerId ) {
         System.out.println("Customer " + customerId + " idle.");
         rl.lock();
         try {
             while (customerIdle == true) {
                 notStarted.await();
             }  
-            if (customerId < this.nCustomers) {
+            if (customerId > this.nCustomers) {
+                notChoosen.await();
                 //System.out.println("Customer " + customerId + " entering OutsideHall.");
                 //orderedCustomers.set(customerId, customerId);
                 //System.out.println("Customers Array: " + orderedCustomers);
             }
             else {
-                notChoosen.await();
-            }   // customers que dos 99 não devem proseguir ficam aqui bloqueados
+                while (customerId != this.previousCustomerId + 1) {
+                    notNext.await();
+                }
+                this.previousCustomerId++;
+                notNext.signalAll();
+                
+               
+            }
+            
         }
         catch(InterruptedException ex)
         {
@@ -64,19 +77,21 @@ public class SAIdle implements IIdle_Customer,
         finally {   
           try{
                 Thread.sleep(this.randomTimeout());
-            } catch (InterruptedException ex) {}
-            rl.unlock();
+           } catch (InterruptedException ex) {}
+           rl.unlock();
         }
+        return this.cto;
     }
         
     @Override
-    public void start( int nCustomers ) {
+    public void start( int nCustomers, int cto ) {
         setNCustomers(nCustomers);
         rl.lock();
         try {
             TimeUnit.SECONDS.sleep(5); // só para simular o user a dar start
             System.out.println("Start simulation...");
             customerIdle = false;
+            this.cto = cto;
             notStarted.signalAll();
         } 
         catch ( InterruptedException ex ) {}
@@ -100,6 +115,7 @@ public class SAIdle implements IIdle_Customer,
     public void setNCustomers(int nCustomers) {
         this.nCustomers = nCustomers;
     }
+    
    
 }
 

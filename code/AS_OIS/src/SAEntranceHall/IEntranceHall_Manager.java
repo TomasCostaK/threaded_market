@@ -5,10 +5,13 @@
  */
 package SAEntranceHall;
 
+import FIFO.FIFO;
+
 /**
  *
  * @author omp
  */
 public interface IEntranceHall_Manager {
     public void call();
+    public FIFO getFifoEntranceHall();
 }

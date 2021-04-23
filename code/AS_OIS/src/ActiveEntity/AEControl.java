@@ -21,6 +21,8 @@ import java.net.SocketTimeoutException;
 public class AEControl extends Thread {
 
     private final IIdle_Control idle;
+    private final IOutsideHall_Control outsideHall;
+    private final IEntranceHall_Control entranceHall;
     
     private int nCustomers;
     
@@ -31,22 +33,31 @@ public class AEControl extends Thread {
     private Message received;
     private Message send;
     
-    public AEControl( IIdle_Control idle /* mais áreas partilhadas */ ) {
+    public AEControl( IIdle_Control idle, IOutsideHall_Control outsideHall, IEntranceHall_Control entranceHall /* mais áreas partilhadas */ ) {
         this.idle = idle;
         this.send = new Message("Ok");
+        this.outsideHall = outsideHall;
+        this.entranceHall = entranceHall;
     }
     
     /**public void start( int nCustomers, Socket socket ) {
         idle.start( nCustomers );
     }**/
     
-     public void start(int nCustomers) {
-        idle.start(nCustomers);
+     public void startSimulation(int nCustomers, int cto) {
+        idle.start(nCustomers, cto);
     }
     
-    public void end() {
+    public void endSimulation() {
         // terminar Customers em idle
         idle.end();
+        // terminar restantes Customers e outras AE
+    }
+    
+    
+    public void suspendSimulation() {
+        outsideHall.suspend();
+        entranceHall.suspend();
         // terminar restantes Customers e outras AE
     }
     // mais comandos 
@@ -67,12 +78,17 @@ public class AEControl extends Thread {
                 received = (Message) serverX.readObject();
                 switch(received.getType()){
                     case "Start":
-                        start(received.getTnc());
+                        startSimulation(received.getTnc(),received.getCto());
                         break;
                     case "End":
-                        end();
+                        endSimulation();
+                        break;
+                    case "Suspend":
+                        suspendSimulation();
+                        break; 
                     default:
                         this.send = new Message("400 Bad Request.");
+                        break;
                 }
                 serverX.writeObject(send);
                 serverX.close();

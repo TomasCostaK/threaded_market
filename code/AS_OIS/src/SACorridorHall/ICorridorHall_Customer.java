@@ -13,6 +13,6 @@ import SAEntranceHall.*;
  */
 public interface ICorridorHall_Customer {
     public void in( int customerId );
-    public void out();
+    public void out( int customerId );
     public boolean checkCorridor();
 }

@@ -5,14 +5,11 @@
  */
 package SAOutsideHall;
 
-import ActiveEntity.AEControl;
 import Communication.NotifyCustomerState;
 import FIFO.FIFO;
 import Main.OIS_GUI;
 import SAEntranceHall.SAEntranceHall;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -26,48 +23,65 @@ public class SAOutsideHall implements IOutsideHall_Manager,
     final FIFO fifoOutsideHall;
     private final SAEntranceHall entranceHall;
     private final ReentrantLock rl = new ReentrantLock( true );
-    private final Condition customerNotIn;
-    private boolean managerWaiting;
     private int totalCustomers;
     private final OIS_GUI GUI;
     private final int customersPosition[];
     private final NotifyCustomerState notify;
+    private int previousCustomerId;
+    private boolean suspended;
     
 
     public SAOutsideHall( int totalCustomers, OIS_GUI GUI, NotifyCustomerState notify, SAEntranceHall entranceHall) {
         this.totalCustomers = totalCustomers;
         this.GUI = GUI;
         this.fifoOutsideHall = new FIFO(totalCustomers); 
-        this.customerNotIn = rl.newCondition(); 
-        this.managerWaiting = true; 
         this.customersPosition = new int[totalCustomers];
         for(int i = 0; i < totalCustomers; i ++){
             this.customersPosition[i] = -1;
         }
         this.notify = notify;
         this.entranceHall = entranceHall;
+        this.previousCustomerId = -1;
+        this.suspended = false;
     } 
 
     @Override
     public void in(int customerId) {
-        notify.sendCustomerState("OutsideHall", customerId);
-        int position = this.selectPositionInGUI(customerId);
-        GUI.moveCustomer(customerId, new Integer[] {0, position});
-        int customerLeaving = fifoOutsideHall.in(customerId);
-        //System.out.println("Customer " + customerLeaving + " leaving OutsideHall.");    
+        if(!this.suspended) {
+            this.previousCustomerId++;
+            notify.sendCustomerState("OutsideHall", customerId);
+            int position = this.selectPositionInGUI(customerId);
+            GUI.moveCustomer(customerId, new Integer[] {0, position});   
+            fifoOutsideHall.in(customerId);
+        }   
+        else {
+            try {
+                Thread.sleep(100000);
+            } catch (InterruptedException ex) {
+                
+            }
+        }
     }
     
     
     @Override
     public void call() {
-        try {
-            while (entranceHall.getFifoEntranceHall().getCount() < entranceHall.getFifoEntranceHall().getMaxCustomers() - 1 && fifoOutsideHall.getCount() > 0) {
-                System.out.println("FIFO Outside: " + fifoOutsideHall.getCount());
-                fifoOutsideHall.out();
-                Thread.sleep(2000);
+        if (!this.suspended) {
+            try {
+                while (entranceHall.getFifoEntranceHall().getCount() < entranceHall.getFifoEntranceHall().getMaxCustomers() && fifoOutsideHall.getCount() > 0) {
+                    fifoOutsideHall.out();
+                    Thread.sleep(1000);
+                }
+            }
+            catch(Exception e) {}    }
+        else{
+            try {
+                Thread.sleep(100000);
+            } catch (InterruptedException ex) {
+               
             }
         }
-        catch(Exception e) {}    }
+    }
     
     
     private long randomTimeout(){
@@ -83,4 +97,18 @@ public class SAOutsideHall implements IOutsideHall_Manager,
         return position;
     }
     
+    public FIFO getFifoOutsideHall() {
+        return this.fifoOutsideHall;
+    }
+    
+    @Override
+    public void suspend() {
+        rl.lock();
+        try {
+            this.suspended = true;
+        } 
+        finally {
+          rl.unlock();
+        }
+    }
 }

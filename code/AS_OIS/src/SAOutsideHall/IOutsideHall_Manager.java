@@ -5,10 +5,13 @@
  */
 package SAOutsideHall;
 
+import FIFO.FIFO;
+
 /**
  *
  * @author omp
  */
 public interface IOutsideHall_Manager {
     public void call();
+    public FIFO getFifoOutsideHall();
 }

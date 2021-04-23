@@ -8,7 +8,7 @@ import SACorridorHall.ICorridorHall_Customer;
 import SACorridor.ICorridor_Customer;
 import SAPaymentHall.IPaymentHall_Customer;
 import SAPaymentPoint.IPaymentPoint_Customer;
-import java.util.concurrent.TimeUnit;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -29,44 +29,47 @@ public class AECustomer extends Thread {
     // área partilhada OutsideHall
     private final IOutsideHall_Customer outsideHall;
     private final IEntranceHall_Customer entranceHall;
-    private final ICorridorHall_Customer corridorHall;
-    private final ICorridor_Customer corridor;
+    private final ICorridorHall_Customer[] corridorHalls;
+    private final ICorridor_Customer[] corridors;
     private final IPaymentHall_Customer paymentHall;
     private final IPaymentPoint_Customer paymentPoint;
+    private int corridorNumber;
+    private int cto;
     
-    public AECustomer( int customerId, IIdle_Customer idle, IOutsideHall_Customer outsideHall, IEntranceHall_Customer entranceHall, ICorridorHall_Customer corridorHall, ICorridor_Customer corridor, IPaymentHall_Customer paymentHall, IPaymentPoint_Customer paymentPoint) {
+    public AECustomer( int customerId, IIdle_Customer idle, IOutsideHall_Customer outsideHall, IEntranceHall_Customer entranceHall, ICorridorHall_Customer[] corridorHalls, ICorridor_Customer[] corridors, IPaymentHall_Customer paymentHall, IPaymentPoint_Customer paymentPoint) {
         this.customerId = customerId;
         this.idle = idle;
         this.outsideHall = outsideHall;
         this.entranceHall = entranceHall;
-        this.corridorHall = corridorHall;
-        this.corridor = corridor;
+        this.corridorHalls = corridorHalls;
+        this.corridors = corridors;
         this.paymentHall = paymentHall;
         this.paymentPoint = paymentPoint;
+        this.corridorNumber = 0;
+        this.cto = 0;
     }
     
     @Override
     public void run() {
-        while ( true ) {
+         
             try{
             // thread avança para Idle
-                idle.idle(customerId );
+                cto = idle.idle(customerId );
                 // se simulação activa (não suspend, não stop, não end), thread avança para o outsideHall
                 outsideHall.in( customerId );
-                TimeUnit.SECONDS.sleep(3); 
-                entranceHall.in( customerId );
-                corridorHall.in(customerId);
-                TimeUnit.SECONDS.sleep(2);
-                
-                corridorHall.out();
-                corridor.in(customerId);
-                //TimeUnit.SECONDS.sleep(2);
-                //corridor.out();
+                this.corridorNumber = entranceHall.in( customerId );
+                corridorHalls[this.corridorNumber].in(customerId);
+                Thread.sleep(2000);
+                corridorHalls[this.corridorNumber].out(customerId);         
+                corridors[this.corridorNumber].in(customerId, cto);
+
+
                 
                 
                 //idle.idle(customerId );
             }
             catch ( Exception ex ) {}
-        }
+        
     }
+
 }

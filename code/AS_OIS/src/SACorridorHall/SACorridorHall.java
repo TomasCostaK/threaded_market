@@ -6,7 +6,7 @@
 package SACorridorHall;
 import Communication.NotifyCustomerState;
 
-import FIFO.FIFO;
+import java.util.HashMap;
 import FIFO.Queue;
 import Main.OIS_GUI;
 import SACorridor.SACorridor;
@@ -25,6 +25,8 @@ public class SACorridorHall implements ICorridorHall_Customer,
     private final NotifyCustomerState notify;
     private final int id;
     private final SACorridor corridor;
+    private HashMap<Integer, Integer> positions;
+    private boolean corridorHasSpace;
 
     public SACorridorHall( int maxCustomers, OIS_GUI GUI, NotifyCustomerState notify, int id , SACorridor corridor) {
         this.fifoCorridorHall = new Queue<Integer>(maxCustomers);
@@ -37,6 +39,8 @@ public class SACorridorHall implements ICorridorHall_Customer,
         this.notify = notify;
         this.id = id;
         this.corridor = corridor;
+        this.positions = new HashMap<Integer, Integer>();
+        this.corridorHasSpace = false;
     }
     
 
@@ -46,27 +50,29 @@ public class SACorridorHall implements ICorridorHall_Customer,
         int position = this.selectPositionInGUI(customerId);
         GUI.moveCustomer(customerId, new Integer[] {id, position});
         fifoCorridorHall.in(customerId);
+  
     }
     
     @Override
-    public void out() {
+    public void out(int customerId) {
         // before leaving, awaits checking if corridor is clear
-        while (checkCorridor() == false) {
-            try {
-                System.out.println("No space in corridor; Sleeping.");
-                Thread.sleep(2500);
-            } catch (Exception e){
-                System.out.println("Thread failed to sleep");
+        try {
+            while (!checkCorridor()) {
             }
-
-        }
-        fifoCorridorHall.out();
-        System.out.println("Customer leaving CorridorHall.");
+            fifoCorridorHall.out();
+            this.customersPosition[positions.get(customerId)] = -1; 
+        } catch (Exception e ) {};
+ 
+        //System.out.println("Customer leaving CorridorHall.");
     }
 
     @Override
     public boolean checkCorridor() {
-        return corridor.getFifoCorridor().hasSpace();
+        //System.out.println("Corridor " + id + " Count: " + corridor.getFifoCorridor().getCount() + " Size: " + corridor.getFifoCorridor().getSize());
+        corridorHasSpace = corridor.getFifoCorridor().hasSpace();
+        return corridorHasSpace;
+
+        
     }
    
     private int selectPositionInGUI(int customerId){
@@ -77,7 +83,8 @@ public class SACorridorHall implements ICorridorHall_Customer,
        
         customersPosition[position] = customerId;
         
-        System.out.println(position);
+        positions.put(customerId, position);
+        
         return position;
         
         

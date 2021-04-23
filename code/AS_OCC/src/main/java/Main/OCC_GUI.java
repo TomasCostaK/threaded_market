@@ -247,12 +247,14 @@ public class OCC_GUI extends javax.swing.JFrame {
             }
         });
 
+        tnc.setText("10");
         tnc.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tncActionPerformed(evt);
             }
         });
 
+        cto.setText("100");
         cto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ctoActionPerformed(evt);
@@ -1672,55 +1674,94 @@ public class OCC_GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_autoActionPerformed
 
     private void manualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_manualActionPerformed
-        // TODO add your handling code here:
+        sto.setEnabled(false);
+        jLabel3.setEnabled(false);
     }//GEN-LAST:event_manualActionPerformed
 
     private void startActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startActionPerformed
         
-        if (!tnc.getText().equals("") && !cto.getText().equals("") && !sto.getText().equals("")) {
-            Integer[] possibleCto = {0, 100, 250, 500, 1000};
-            Integer[] possibleSto = {0, 100, 250, 500, 1000, 2500, 5000};
-            Integer tnc_value = Integer.parseInt(tnc.getText());
-            Integer cto_value = Integer.parseInt(cto.getText());
-            Integer sto_value = Integer.parseInt(sto.getText());
-        
-            if (tnc_value < 1 || tnc_value > 99) {
-                JOptionPane.showMessageDialog(new JPanel(), 
-                        "Number of customers must be between 1 and 99!", 
-                        "Error", JOptionPane.ERROR_MESSAGE);
+        if (auto.isSelected()) {
+            if (!tnc.getText().equals("") && !cto.getText().equals("") && !sto.getText().equals("")) {
+                Integer[] possibleCto = {0, 100, 250, 500, 1000};
+                Integer[] possibleSto = {0, 100, 250, 500, 1000, 2500, 5000};
+                Integer tnc_value = Integer.parseInt(tnc.getText()) - 1;
+                Integer cto_value = Integer.parseInt(cto.getText());
+                Integer sto_value = Integer.parseInt(sto.getText());
+
+                if (tnc_value < 1 || tnc_value > 99) {
+                    JOptionPane.showMessageDialog(new JPanel(), 
+                            "Number of customers must be between 1 and 99!", 
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                else if (!Arrays.stream(possibleCto).anyMatch(cto_value::equals)) {
+                    JOptionPane.showMessageDialog(new JPanel(), 
+                            "Cto must be in {0, 100, 250, 500, 1000}!", 
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                else if (!Arrays.stream(possibleSto).anyMatch(sto_value::equals)) {
+                    JOptionPane.showMessageDialog(new JPanel(), 
+                            "Sto must be in {0, 100, 250, 500, 1000, 2500, 5000}!", 
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                else {
+                    tnc.setEnabled(false);
+                    cto.setEnabled(false);
+                    sto.setEnabled(false);
+                    start.setEnabled(false);
+                    suspend.setEnabled(true);
+                    stop.setEnabled(true);
+                    end.setEnabled(true);
+                    controller.startSimulation(tnc_value,cto_value,sto_value);
+                } 
             }
-            else if (!Arrays.stream(possibleCto).anyMatch(cto_value::equals)) {
-                JOptionPane.showMessageDialog(new JPanel(), 
-                        "Cto must be in {0, 100, 250, 500, 1000}!", 
-                        "Error", JOptionPane.ERROR_MESSAGE);
+            else JOptionPane.showMessageDialog(new JPanel(), 
+                            "Complete all fields!", 
+                            "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        else if (manual.isSelected()) {
+            if (!tnc.getText().equals("") && !cto.getText().equals("")) {
+                Integer[] possibleCto = {0, 100, 250, 500, 1000};
+                Integer tnc_value = Integer.parseInt(tnc.getText()) - 1;
+                Integer cto_value = Integer.parseInt(cto.getText());
+                Integer sto_value = 0;
+
+                if (tnc_value < 1 || tnc_value > 99) {
+                    JOptionPane.showMessageDialog(new JPanel(), 
+                            "Number of customers must be between 1 and 99!", 
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                else if (!Arrays.stream(possibleCto).anyMatch(cto_value::equals)) {
+                    JOptionPane.showMessageDialog(new JPanel(), 
+                            "Cto must be in {0, 100, 250, 500, 1000}!", 
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                else {
+                    tnc.setEnabled(false);
+                    cto.setEnabled(false);
+                    sto.setEnabled(false);
+                    start.setEnabled(false);
+                    suspend.setEnabled(true);
+                    stop.setEnabled(true);
+                    end.setEnabled(true);
+                    controller.startSimulation(tnc_value,cto_value,sto_value);
+                } 
             }
-            else if (!Arrays.stream(possibleSto).anyMatch(sto_value::equals)) {
-                JOptionPane.showMessageDialog(new JPanel(), 
-                        "Sto must be in {0, 100, 250, 500, 1000, 2500, 5000}!", 
-                        "Error", JOptionPane.ERROR_MESSAGE);
-            }
-            else {
-                tnc.setEnabled(false);
-                cto.setEnabled(false);
-                sto.setEnabled(false);
-                start.setEnabled(false);
-                suspend.setEnabled(true);
-                stop.setEnabled(true);
-                end.setEnabled(true);
-                controller.startSimulation(tnc_value,cto_value,sto_value);
-            } 
+            else JOptionPane.showMessageDialog(new JPanel(), 
+                            "Complete all fields!", 
+                            "Error", JOptionPane.ERROR_MESSAGE);
         }
         else JOptionPane.showMessageDialog(new JPanel(), 
-                        "Complete all fields!", 
-                        "Error", JOptionPane.ERROR_MESSAGE);
+                            "Select auto or manual!", 
+                            "Error", JOptionPane.ERROR_MESSAGE);
     }//GEN-LAST:event_startActionPerformed
 
     private void suspendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_suspendActionPerformed
         start.setEnabled(false);
         suspend.setEnabled(false);
         resume.setEnabled(true);
-        stop.setEnabled(true);
+        stop.setEnabled(false);
         end.setEnabled(true);
+        controller.suspendSimulation();
     }//GEN-LAST:event_suspendActionPerformed
 
     private void resumeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resumeActionPerformed
@@ -1732,7 +1773,7 @@ public class OCC_GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_resumeActionPerformed
 
     private void stopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_stopActionPerformed
 
     private void endActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_endActionPerformed

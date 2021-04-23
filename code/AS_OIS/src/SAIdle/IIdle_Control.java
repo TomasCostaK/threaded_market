@@ -10,6 +10,6 @@ package SAIdle;
  * @author omp
  */
 public interface IIdle_Control {
-    public void start( int nCustomers );
+    public void start( int nCustomers, int cto );
     public void end();
 }

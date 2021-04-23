@@ -10,4 +10,6 @@ package SAOutsideHall;
  * @author omp
  */
 public interface IOutsideHall_Control {
+    
+    public void suspend();
 }

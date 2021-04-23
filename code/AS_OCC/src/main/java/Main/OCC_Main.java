@@ -20,6 +20,8 @@ public class OCC_Main {
         
         final Server server = new Server(OCCPort);
         Server serverX;
+        
+        
       
         Controller controller = new Controller(host, OISPort);
         OCC_GUI GUI = new OCC_GUI(controller);
@@ -35,15 +37,17 @@ public class OCC_Main {
         
         do {
             try {
-                Message send;
+                Message send = new Message("Ok");
                 serverX = server.accept();
                 Message receive = (Message) serverX.readObject();
 
                 switch (receive.getType()) {
                     case ("customerState"):
                         GUI.changeState(receive.getCustomerId(), receive.getCustomerState());
+                        break;
                     default:
                         send = new Message("400 Bad Request");
+                        break;
                 }
 
                 serverX.writeObject(send);

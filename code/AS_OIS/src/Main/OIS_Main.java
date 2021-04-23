@@ -10,6 +10,7 @@ import ActiveEntity.AECustomer;
 import ActiveEntity.AEManager;
 import ActiveEntity.AECashier;
 import Communication.NotifyCustomerState;
+import ManagerHall.ManagerHall;
 import SAIdle.*;
 import SAOutsideHall.*;
 import SAEntranceHall.*;
@@ -60,11 +61,13 @@ public class OIS_Main {
         final SAPaymentHall paymentHall = new SAPaymentHall ( SIZE_PAYMENT_HALL, GUI, notify );
         final SAPaymentPoint paymentPoint = new SAPaymentPoint (SIZE_PAYMENT_BOX, GUI, notify);
         
+        final ManagerHall managerHall = new ManagerHall((IOutsideHall_Manager) outsideHall, (IEntranceHall_Manager) entranceHall  );
+        
 
 
         final AECustomer[] aeCustomer = new AECustomer[ MAX_CUSTOMERS ];
-        final AEControl control = new AEControl( (IIdle_Control) idle);
-        final AEManager manager = new AEManager(( IIdle_Manager) idle, (IOutsideHall_Manager) outsideHall, (IEntranceHall_Manager) entranceHall  );
+        final AEControl control = new AEControl( (IIdle_Control) idle, (IOutsideHall_Control) outsideHall, (IEntranceHall_Control) entranceHall);
+        final AEManager manager = new AEManager(( IIdle_Manager) idle, (IOutsideHall_Manager) outsideHall, (IEntranceHall_Manager) entranceHall, (ManagerHall) managerHall);
         final AECashier cashier = new AECashier((IIdle_Cashier) idle, (IPaymentHall_Cashier) paymentHall, (IPaymentPoint_Cashier) paymentPoint);
         
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -80,11 +83,11 @@ public class OIS_Main {
                                               (IIdle_Customer) idle,
                                               (IOutsideHall_Customer) outsideHall, 
                                               (IEntranceHall_Customer) entranceHall,
-                                              (ICorridorHall_Customer) corridorHalls[0],
-                                              (ICorridor_Customer) corridors[0],
+                                              (ICorridorHall_Customer[]) corridorHalls,
+                                              (ICorridor_Customer[]) corridors,
                                               (IPaymentHall_Customer) paymentHall,
                                               (IPaymentPoint_Customer) paymentPoint
-                );
+            );
             aeCustomer[ i ].start();
         }
        

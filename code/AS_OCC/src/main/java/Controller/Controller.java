@@ -33,6 +33,12 @@ public class Controller {
         sendMessage();
     }
     
+    public void suspendSimulation() {
+        System.out.println("Suspend");
+        messageSent = new Message("Stop");
+        sendMessage();
+    }
+    
     public void endSimulation() {
         System.out.println("Ended");
         messageSent = new Message("End");

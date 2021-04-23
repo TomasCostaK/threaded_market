@@ -17,6 +17,7 @@ public class Queue<T> {
     private int head      = 0;    // Pointer to head of queue
     private int tail      = 0;    // Pointer to tail of queue
     private boolean empty = true; // Whether the queue is empty or not
+    private int count;
 
     /**
      * Implements a generic FIFO queue with only the three basic
@@ -27,6 +28,7 @@ public class Queue<T> {
     public Queue(int size) {
         this.queue = new Object[size];
         this.size  = size;
+        this.count=0;
     }
 
     /**
@@ -45,6 +47,7 @@ public class Queue<T> {
         queue[tail] = elem;
         tail        = (tail + 1) % size;
         empty       = false;
+        count++;
     }
 
     /**
@@ -61,6 +64,7 @@ public class Queue<T> {
         T elem = (T) queue[head];
         head   = (head + 1) % size;
         empty  = (head == tail);
+        count--;
         return elem;
     }
     
@@ -76,12 +80,20 @@ public class Queue<T> {
         
         return true;
     }
+    
+    public int getSize() {
+        return this.size;
+    }
+    
+    public int getCount() {
+        return this.count;
+    }
 
     /**
      * A simple test driver for the queue.
      * It creates the queue, inserts and element, and then
      * fetches and prints the element.
-     */
+ 
     public static void main(String[] args) throws Exception {
         // Create a queue of integers of size 10
         Queue<Integer> q = new Queue<Integer>(3);
@@ -93,5 +105,6 @@ public class Queue<T> {
         // Get an element form the queue and print it
         System.out.println(q.out());
     }
+    *     */
 
 }

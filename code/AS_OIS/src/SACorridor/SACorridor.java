@@ -6,7 +6,6 @@
 package SACorridor;
 import Communication.NotifyCustomerState;
 
-import FIFO.FIFO;
 import FIFO.Queue;
 import Main.OIS_GUI;
 
@@ -20,29 +19,52 @@ public class SACorridor implements ICorridor_Customer,
     final Queue fifoCorridor;
     private int totalCustomers;
     private final OIS_GUI GUI;
-    private final int customersPosition[];
     private final NotifyCustomerState notify;
     private final int id;
+    private final int customersPosition[];
 
     public SACorridor( int maxCustomers, OIS_GUI GUI, NotifyCustomerState notify, int id ) {
         this.fifoCorridor = new Queue<Integer>(maxCustomers);
         this.GUI = GUI;
         this.totalCustomers = maxCustomers;
-        this.customersPosition = new int[totalCustomers];
-        for(int i = 0; i < totalCustomers; i ++){
-            this.customersPosition[i] = -1;
-        }
         this.id = id;
         this.notify = notify;
+        this.customersPosition = new int[10];
+        for(int i = 0; i < 10; i ++){
+            this.customersPosition[i] = -1;
+        }
     }
     
 
     @Override
-    public void in(int customerId) {
-        notify.sendCustomerState("Corridor", customerId);
-        int position = this.selectPositionInGUI(customerId);
-        GUI.moveCustomer(customerId, new Integer[] {id, position});
-        fifoCorridor.in(customerId);
+    public void in(int customerId, int cto) {
+        try {
+            //System.out.println("corridor " + id + " size: "+fifoCorridor.getSize());
+            //System.out.println("corridor " + id + " count:   "+fifoCorridor.getCount());
+            fifoCorridor.in(customerId);
+            notify.sendCustomerState("Corridor", customerId);
+            int previous_position = 0;
+            for(int i=0; i<10; i++) {
+                int position = i;
+                while(this.customersPosition[position] != -1) {
+                    
+                }
+                this.customersPosition[previous_position] = -1;
+                this.customersPosition[position] = customerId;
+                if (position==9) {  // last position in corridor (aqui parar porque o resto ainda não está feito)
+                    GUI.moveCustomer(customerId, new Integer[] {id, position});
+                    Thread.sleep(1000000);
+                }
+                else {
+                    GUI.moveCustomer(customerId, new Integer[] {id, position});
+                    Thread.sleep(cto);  
+                    previous_position = position;
+                    
+                }
+                
+            }
+        } catch (Exception e) {};
+        
     }
     
     @Override
@@ -65,14 +87,6 @@ public class SACorridor implements ICorridor_Customer,
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    private int selectPositionInGUI(int customerId){
-        int position = (int) Math.round((Math.random() * (totalCustomers - 1)));
-       
-        while(customersPosition[position] != -1) position = (int) Math.round((Math.random() * (totalCustomers - 1)));
-       
-        customersPosition[position] = customerId;
-        return position;
-    } 
 
     public Queue getFifoCorridor() {
         return this.fifoCorridor;
