@@ -1773,13 +1773,20 @@ public class OCC_GUI extends javax.swing.JFrame {
         resume.setEnabled(false);
         stop.setEnabled(true);
         end.setEnabled(true);
+        controller.resumeSimulation();
     }//GEN-LAST:event_resumeActionPerformed
 
     private void stopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopActionPerformed
-        
+        start.setEnabled(true);
+        suspend.setEnabled(false);
+        resume.setEnabled(false);
+        stop.setEnabled(false);
+        end.setEnabled(true);
+        controller.stopSimulation();
     }//GEN-LAST:event_stopActionPerformed
 
     private void endActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_endActionPerformed
+        start.setEnabled(true);
         start.setEnabled(true);
         suspend.setEnabled(false);
         resume.setEnabled(false);

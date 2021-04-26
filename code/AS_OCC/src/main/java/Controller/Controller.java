@@ -35,6 +35,18 @@ public class Controller {
     
     public void suspendSimulation() {
         System.out.println("Suspend");
+        messageSent = new Message("Suspend");
+        sendMessage();
+    }
+    
+    public void resumeSimulation() {
+        System.out.println("Resume");
+        messageSent = new Message("Resume");
+        sendMessage();
+    }
+
+    public void stopSimulation() {
+        System.out.println("Stop");
         messageSent = new Message("Stop");
         sendMessage();
     }
@@ -63,8 +75,8 @@ public class Controller {
         
         messageReceived = (Message) con.readObject();
         
-        
         con.close();
     }
     
 }
+
