@@ -37,7 +37,7 @@ public class AECashier extends Thread { // id do customer
             paymentHall.call();
             paymentPoint.process();
             try {
-                Thread.sleep(2500);
+                Thread.sleep(1500);
             } catch (InterruptedException ex) {
                 Logger.getLogger(AECashier.class.getName()).log(Level.SEVERE, null, ex);
             }

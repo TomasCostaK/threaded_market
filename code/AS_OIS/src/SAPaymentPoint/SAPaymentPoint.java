@@ -42,14 +42,13 @@ public class SAPaymentPoint implements IPaymentPoint_Customer,
     
     @Override
     public void process() {
-        System.out.println("People in paymentPoint: " + fifoPaymentBox.getCount());
         if (fifoPaymentBox.getCount() > 0){
+            System.out.println("People in paymentPoint: " + fifoPaymentBox.getCount());
             fifoPaymentBox.out();
             this.customersPosition[0] = -1;
             // Signaling its over
             notify.sendCustomerState("Terminated", customerLeaving);
-            GUI.moveCustomer(customerLeaving, new Integer[] {id+1, customerLeaving});
-            
+            GUI.moveCustomer(customerLeaving, new Integer[] {10, customerLeaving});
         }
     }
 

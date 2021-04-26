@@ -45,7 +45,7 @@ public class OIS_GUI extends javax.swing.JFrame {
         corridor3 = new javax.swing.JLabel[] {corridor1_21,corridor1_22,corridor1_23, corridor1_24,corridor1_25,corridor1_26, corridor1_27,corridor1_28,corridor1_29, corridor1_30};
         customerPosition = new HashMap<>();
         paymentHall = new javax.swing.JLabel[] {pay1, pay2};
-        paymentPoint = new javax.swing.JLabel[] {pay3, pay4};
+        paymentPoint = new javax.swing.JLabel[] {pay3};
     }
     
     
