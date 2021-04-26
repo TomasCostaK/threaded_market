@@ -45,9 +45,9 @@ public class SAPaymentHall implements IPaymentHall_Customer,
     @Override
     public void call() {
         try {
+            System.out.println("People in paymentHall: " + fifoPaymentHall.getCount());
             if (fifoPaymentHall.getCount() > 0 && paymentPoint.getFifoPaymentPoint().getCount() < paymentPoint.getFifoPaymentPoint().getMaxCustomers()) {
                 fifoPaymentHall.out();
-                TimeUnit.SECONDS.sleep(1);
             }
         }
         catch(Exception e) {}    
@@ -59,7 +59,6 @@ public class SAPaymentHall implements IPaymentHall_Customer,
         int position = this.selectPositionInGUI(customerId);
         GUI.moveCustomer(customerId, new Integer[] {id, position});
         int customerLeaving = fifoPaymentHall.in(customerId);
-        System.out.println("Customer " + customerLeaving + " leaving PaymentHall.");   
     }
     
     @Override

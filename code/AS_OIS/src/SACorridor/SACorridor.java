@@ -52,6 +52,7 @@ public class SACorridor implements ICorridor_Customer,
                 while(this.customersPosition[position] != -1) {
                     
                 }
+                
                 this.customersPosition[previous_position] = -1;
                 this.customersPosition[position] = customerId;
                 if (position==9) {  // last position in corridor (aqui parar porque o resto ainda não está feito)
@@ -59,7 +60,8 @@ public class SACorridor implements ICorridor_Customer,
                     System.out.println("Customer "+customerId+" trying to enter PaymentHall, count is: " + paymentHall.getFifoPaymentHall().getCount());
                     paymentHall.in(customerId);
                     // It will never get here, this is wrong
-                    this.customersPosition[position] = -1;
+                    previous_position = position;
+                    this.customersPosition[previous_position] = -1;
                     out();
                 }
                 else {
