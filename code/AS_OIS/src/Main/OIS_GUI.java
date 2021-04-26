@@ -21,6 +21,8 @@ public class OIS_GUI extends javax.swing.JFrame {
     private javax.swing.JLabel[] corridor2;
     private javax.swing.JLabel[] corridor3;
     private HashMap<Integer, Integer[]> customerPosition;
+    private javax.swing.JLabel[] paymentHall;
+    private javax.swing.JLabel[] paymentPoint;
 
     public OIS_GUI() {
         initComponents();
@@ -42,12 +44,13 @@ public class OIS_GUI extends javax.swing.JFrame {
         corridor2 = new javax.swing.JLabel[] {corridor1_11,corridor1_12,corridor1_13, corridor1_14,corridor1_15,corridor1_16, corridor1_17,corridor1_18,corridor1_19, corridor1_20};
         corridor3 = new javax.swing.JLabel[] {corridor1_21,corridor1_22,corridor1_23, corridor1_24,corridor1_25,corridor1_26, corridor1_27,corridor1_28,corridor1_29, corridor1_30};
         customerPosition = new HashMap<>();
+        paymentHall = new javax.swing.JLabel[] {pay1, pay2};
+        paymentPoint = new javax.swing.JLabel[] {pay3, pay4};
     }
     
     
     
     public void moveCustomer(int customerId, Integer[] position){
-        
         if(customerPosition.containsKey(customerId)){
             switch(customerPosition.get(customerId)[0]){
                 case 0:
@@ -74,7 +77,15 @@ public class OIS_GUI extends javax.swing.JFrame {
                 case 7:
                     corridor3[customerPosition.get(customerId)[1]].setText("");
                     break;
-       
+                case 8:
+                    paymentHall[customerPosition.get(customerId)[1]].setText("");
+                    break;
+                case 9:
+                    paymentPoint[customerPosition.get(customerId)[1]].setText("");
+                    break;
+                case 10:
+                    paymentPoint[customerPosition.get(customerId)[1]].setText("");
+                    break;
                 }
 
             switch(position[0]){
@@ -102,7 +113,15 @@ public class OIS_GUI extends javax.swing.JFrame {
                 case 7:
                     corridor3[position[1]].setText(customerId+"");
                     break;
-       
+                case 8:
+                    paymentHall[position[1]].setText(customerId+"");
+                    break;
+                case 9:
+                    paymentPoint[position[1]].setText(customerId+"");
+                    break;
+                case 10:
+                    paymentPoint[position[1]].setText("");
+                    break;
             }
         }
         else{
@@ -1802,6 +1821,7 @@ public class OIS_GUI extends javax.swing.JFrame {
 
         pay4.setBackground(new java.awt.Color(242, 243, 243));
         pay4.setForeground(new java.awt.Color(149, 149, 153));
+        pay4.setText("Cashier");
         pay4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         pay4.setOpaque(true);
 

@@ -62,6 +62,9 @@ public class OCC_GUI extends javax.swing.JFrame {
             case "PaymentPoint":
                 states[idCustomer].setBackground(Color.gray);
                 break;
+            case "Terminated":
+                states[idCustomer].setBackground(Color.red);
+                break;
             case "OutsideHall":
                 states[idCustomer].setBackground(Color.green);
                 break;
@@ -1573,7 +1576,7 @@ public class OCC_GUI extends javax.swing.JFrame {
                         .addComponent(legend7, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel17)
-                        .addContainerGap(24, Short.MAX_VALUE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(legend3, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)

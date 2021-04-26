@@ -8,6 +8,9 @@ import Communication.NotifyCustomerState;
 
 import FIFO.FIFO;
 import Main.OIS_GUI;
+import SAPaymentPoint.SAPaymentPoint;
+import java.util.concurrent.TimeUnit;
+
 
 /**
  *
@@ -22,8 +25,11 @@ public class SAPaymentHall implements IPaymentHall_Customer,
     private final OIS_GUI GUI;
     private final int customersPosition[];
     private final NotifyCustomerState notify;
+    final SAPaymentPoint paymentPoint;
+    private final int id;
 
-    public SAPaymentHall( int maxCustomers, OIS_GUI GUI, NotifyCustomerState notify ) {
+
+    public SAPaymentHall( int maxCustomers, OIS_GUI GUI, NotifyCustomerState notify, int id , SAPaymentPoint paymentPoint ) {
         this.fifoPaymentHall = new FIFO(maxCustomers);
         this.GUI = GUI;
         this.totalCustomers = maxCustomers;
@@ -31,21 +37,27 @@ public class SAPaymentHall implements IPaymentHall_Customer,
         for(int i = 0; i < totalCustomers; i ++){
             this.customersPosition[i] = -1;
         }
+        this.id = id;
         this.notify = notify;
+        this.paymentPoint = paymentPoint;
     }
     
     @Override
     public void call() {
-        while (true) {
-            fifoPaymentHall.out();
+        try {
+            if (fifoPaymentHall.getCount() > 0 && paymentPoint.getFifoPaymentPoint().getCount() < paymentPoint.getFifoPaymentPoint().getMaxCustomers()) {
+                fifoPaymentHall.out();
+                TimeUnit.SECONDS.sleep(1);
+            }
         }
+        catch(Exception e) {}    
     }
 
     @Override
     public void in(int customerId) {
         notify.sendCustomerState("PaymentHall", customerId);
         int position = this.selectPositionInGUI(customerId);
-        GUI.moveCustomer(customerId, new Integer[] {1, position});
+        GUI.moveCustomer(customerId, new Integer[] {id, position});
         int customerLeaving = fifoPaymentHall.in(customerId);
         System.out.println("Customer " + customerLeaving + " leaving PaymentHall.");   
     }
@@ -64,4 +76,7 @@ public class SAPaymentHall implements IPaymentHall_Customer,
         return position;
     } 
 
+    public FIFO getFifoPaymentHall() {
+        return this.fifoPaymentHall;
+    }
 }

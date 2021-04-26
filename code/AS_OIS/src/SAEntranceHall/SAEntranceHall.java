@@ -52,7 +52,6 @@ public class SAEntranceHall implements IEntranceHall_Customer,
         try {
             while (fifoEntranceHall.getCount() > 0) {
 
-                            System.out.println("here");
                             if (corridorHalls[0].getFifoCorridorHall().hasSpace()) {
                                 fifoEntranceHall.out();
                                 TimeUnit.SECONDS.sleep(1);

@@ -42,10 +42,13 @@ public class OIS_Main {
         
         final SACorridorHall[] corridorHalls = new SACorridorHall[N_CORRIDOR];
         
+        final SAPaymentPoint paymentPoint = new SAPaymentPoint (SIZE_PAYMENT_BOX, GUI, notify , 9);
+        final SAPaymentHall paymentHall = new SAPaymentHall ( SIZE_PAYMENT_HALL, GUI, notify, 8 ,paymentPoint );
+        
         // create N_CORRIDORS Halls and N Corridors, we get ordered corridor halls, corresponding to the given corridor
         for(int i=0; i<N_CORRIDOR; i++){
                         
-            SACorridor corridor = new SACorridor( SIZE_CORRIDOR, GUI, notify, 5+i);
+            SACorridor corridor = new SACorridor( SIZE_CORRIDOR, GUI, notify, 5+i, paymentHall);
             corridors[i] = corridor;
             
             SACorridorHall corridor_hall = new SACorridorHall( SIZE_CORRIDOR_HALL, GUI, notify,2+i, corridor);
@@ -57,9 +60,6 @@ public class OIS_Main {
         final SAEntranceHall entranceHall = new SAEntranceHall ( SIZE_ENTRANCE_HALL, GUI, notify, corridorHalls );
         final SAOutsideHall outsideHall =  new SAOutsideHall( MAX_CUSTOMERS, GUI, notify, entranceHall );
         
-
-        final SAPaymentHall paymentHall = new SAPaymentHall ( SIZE_PAYMENT_HALL, GUI, notify );
-        final SAPaymentPoint paymentPoint = new SAPaymentPoint (SIZE_PAYMENT_BOX, GUI, notify);
         
         final ManagerHall managerHall = new ManagerHall((IOutsideHall_Manager) outsideHall, (IEntranceHall_Manager) entranceHall  );
         
@@ -78,6 +78,7 @@ public class OIS_Main {
         
         control.start();
         manager.start();
+        cashier.start();
         for ( int i = 0; i < MAX_CUSTOMERS; i++ ) {
             aeCustomer[ i ] = new AECustomer( i,
                                               (IIdle_Customer) idle,
@@ -87,7 +88,7 @@ public class OIS_Main {
                                               (ICorridor_Customer[]) corridors,
                                               (IPaymentHall_Customer) paymentHall,
                                               (IPaymentPoint_Customer) paymentPoint
-            );
+            ); 
             aeCustomer[ i ].start();
         }
        

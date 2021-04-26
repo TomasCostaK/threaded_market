@@ -8,6 +8,7 @@ import Communication.NotifyCustomerState;
 
 import FIFO.Queue;
 import Main.OIS_GUI;
+import SAPaymentHall.SAPaymentHall;
 
 /**
  *
@@ -22,8 +23,9 @@ public class SACorridor implements ICorridor_Customer,
     private final NotifyCustomerState notify;
     private final int id;
     private final int customersPosition[];
+    final SAPaymentHall paymentHall;
 
-    public SACorridor( int maxCustomers, OIS_GUI GUI, NotifyCustomerState notify, int id ) {
+    public SACorridor( int maxCustomers, OIS_GUI GUI, NotifyCustomerState notify, int id, SAPaymentHall paymentHall ) {
         this.fifoCorridor = new Queue<Integer>(maxCustomers);
         this.GUI = GUI;
         this.totalCustomers = maxCustomers;
@@ -33,6 +35,7 @@ public class SACorridor implements ICorridor_Customer,
         for(int i = 0; i < 10; i ++){
             this.customersPosition[i] = -1;
         }
+        this.paymentHall = paymentHall;
     }
     
 
@@ -53,13 +56,16 @@ public class SACorridor implements ICorridor_Customer,
                 this.customersPosition[position] = customerId;
                 if (position==9) {  // last position in corridor (aqui parar porque o resto ainda não está feito)
                     GUI.moveCustomer(customerId, new Integer[] {id, position});
-                    Thread.sleep(1000000);
+                    System.out.println("Customer "+customerId+" trying to enter PaymentHall, count is: " + paymentHall.getFifoPaymentHall().getCount());
+                    paymentHall.in(customerId);
+                    // It will never get here, this is wrong
+                    this.customersPosition[position] = -1;
+                    out();
                 }
                 else {
                     GUI.moveCustomer(customerId, new Integer[] {id, position});
                     Thread.sleep(cto);  
                     previous_position = position;
-                    
                 }
                 
             }
@@ -70,9 +76,7 @@ public class SACorridor implements ICorridor_Customer,
     @Override
     public void out() {
         // While there is space in the corridor queue, go for it
-        while (true) {
-            fifoCorridor.out();
-        }
+        fifoCorridor.out();
     }
 
     // Check if there is no one in front of the customer, so they dont advance to the same tile

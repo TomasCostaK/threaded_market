@@ -8,6 +8,8 @@ package ActiveEntity;
 import SAPaymentHall.IPaymentHall_Cashier;
 import SAIdle.IIdle_Cashier;
 import SAPaymentPoint.IPaymentPoint_Cashier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -28,13 +30,17 @@ public class AECashier extends Thread { // id do customer
     
     @Override
     public void run() {
+        
+        // thread avança para Idle
+        idle.idle();
         while ( true ) {
-            // thread avança para Idle
-            idle.idle();
-            // se simulação activa (não suspend, não stop, não end), thread avança para o outsideHall
             paymentHall.call();
             paymentPoint.process();
-            // mais
+            try {
+                Thread.sleep(2500);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(AECashier.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
     

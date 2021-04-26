@@ -62,11 +62,11 @@ public class AECustomer extends Thread {
                 Thread.sleep(2000);
                 corridorHalls[this.corridorNumber].out(customerId);         
                 corridors[this.corridorNumber].in(customerId, cto);
-
-
+                // This is paused, since paymentHall is implemented differently
+                paymentPoint.in(customerId);
                 
-                
-                //idle.idle(customerId );
+                // Finished trip
+                // idle.idle(customerId );
             }
             catch ( Exception ex ) {}
         

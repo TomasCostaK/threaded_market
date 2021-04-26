@@ -8,6 +8,8 @@ import Communication.NotifyCustomerState;
 
 import FIFO.FIFO;
 import Main.OIS_GUI;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -22,22 +24,30 @@ public class SAPaymentPoint implements IPaymentPoint_Customer,
     private final OIS_GUI GUI;
     private final int customersPosition[];
     private final NotifyCustomerState notify;
+    private final int id;
+    private int customerLeaving;
 
-    public SAPaymentPoint( int maxCustomers, OIS_GUI GUI, NotifyCustomerState notify ) {
+    public SAPaymentPoint( int maxCustomers, OIS_GUI GUI, NotifyCustomerState notify, int id ) {
         this.fifoPaymentBox = new FIFO(maxCustomers);
         this.GUI = GUI;
+        this.customerLeaving = -1;
         this.totalCustomers = maxCustomers;
         this.customersPosition = new int[totalCustomers];
         for(int i = 0; i < totalCustomers; i ++){
             this.customersPosition[i] = -1;
         }
+        this.id = id;
         this.notify = notify;
     }
     
     @Override
     public void process() {
-        while (true) {
+        if (fifoPaymentBox.getCount() > 0){
+            System.out.println("CustomerX: "+customerLeaving+ " is leaving the store.");
             fifoPaymentBox.out();
+            // Signaling its over
+            notify.sendCustomerState("Terminated", customerLeaving);
+            GUI.moveCustomer(customerLeaving, new Integer[] {id+1, customerLeaving});
         }
     }
 
@@ -45,12 +55,11 @@ public class SAPaymentPoint implements IPaymentPoint_Customer,
     public void in(int customerId) {
         notify.sendCustomerState("PaymentPoint", customerId);
         int position = this.selectPositionInGUI(customerId);
-        GUI.moveCustomer(customerId, new Integer[] {1, position});
-        int customerLeaving = fifoPaymentBox.in(customerId);
-        System.out.println("Customer " + customerLeaving + " leaving store.");   
+        GUI.moveCustomer(customerId, new Integer[] {id, position});
+        this.customerLeaving = customerId;
+        fifoPaymentBox.in(customerId);
     }
     
-   
     private int selectPositionInGUI(int customerId){
         int position = (int) Math.round((Math.random() * (totalCustomers - 1)));
        
@@ -59,5 +68,9 @@ public class SAPaymentPoint implements IPaymentPoint_Customer,
         customersPosition[position] = customerId;
         return position;
     } 
+    
+    public FIFO getFifoPaymentPoint() {
+        return this.fifoPaymentBox;
+    }
 
 }
