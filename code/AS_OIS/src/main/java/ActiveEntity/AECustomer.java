@@ -71,7 +71,9 @@ public class AECustomer extends Thread {
                     corridorHalls[this.corridorNumber].out(customerId);         
                     corridors[this.corridorNumber].in(customerId, cto);
                     paymentPoint.in(customerId);
-  
+
+                    // After going in the corridor, the cashier will take care of the rest of the pipeline.
+                    // The customer just needs to
                     Thread.sleep(100000);
                 }             
             }

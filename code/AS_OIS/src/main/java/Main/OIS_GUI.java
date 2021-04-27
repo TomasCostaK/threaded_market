@@ -94,10 +94,10 @@ public class OIS_GUI extends javax.swing.JFrame {
                     paymentHall[customerPosition.get(customerId)[1]].setText("");
                     break;
                 case 9:
-                    paymentPoint[customerPosition.get(customerId)[1]].setText("");
+                    paymentPoint[0].setText("");
                     break;
                 case 10:
-                    paymentPoint[customerPosition.get(customerId)[1]].setText("");
+                    paymentPoint[0].setText("");
                     break;
                 }
 
@@ -130,10 +130,10 @@ public class OIS_GUI extends javax.swing.JFrame {
                     paymentHall[position[1]].setText(customerId+"");
                     break;
                 case 9:
-                    paymentPoint[position[1]].setText(customerId+"");
+                    paymentPoint[0].setText(customerId+"");
                     break;
                 case 10:
-                    paymentPoint[position[1]].setText("");
+                    paymentPoint[0].setText("");
                     break;
             }
         }

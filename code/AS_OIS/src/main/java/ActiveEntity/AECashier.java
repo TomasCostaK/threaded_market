@@ -34,11 +34,10 @@ public class AECashier extends Thread { // id do customer
         // thread avança para Idle
         idle.idle();
         while ( true ) {
-            paymentHall.call();
-            paymentPoint.process();
             try {
-                Thread.sleep(1500);
-            } catch (InterruptedException ex) {
+                paymentHall.call();
+                paymentPoint.process();
+            } catch (Exception ex) {
                 Logger.getLogger(AECashier.class.getName()).log(Level.SEVERE, null, ex);
             }
         }

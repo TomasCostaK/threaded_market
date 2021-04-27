@@ -9,6 +9,8 @@ import Communication.NotifyCustomerState;
 import FIFO.FIFO;
 import Main.OIS_GUI;
 import SAPaymentPoint.SAPaymentPoint;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
@@ -27,6 +29,7 @@ public class SAPaymentHall implements IPaymentHall_Customer,
     private final NotifyCustomerState notify;
     final SAPaymentPoint paymentPoint;
     private final int id;
+    private ArrayList<Integer> customers = new ArrayList<>();
 
 
     public SAPaymentHall( int maxCustomers, OIS_GUI GUI, NotifyCustomerState notify, int id , SAPaymentPoint paymentPoint ) {
@@ -40,14 +43,16 @@ public class SAPaymentHall implements IPaymentHall_Customer,
         this.id = id;
         this.notify = notify;
         this.paymentPoint = paymentPoint;
+
     }
     
     @Override
     public void call() {
         try {
             if (fifoPaymentHall.getCount() > 0 && paymentPoint.getFifoPaymentPoint().getCount() < paymentPoint.getFifoPaymentPoint().getMaxCustomers()) {
-                System.out.println("People in paymentHall: " + fifoPaymentHall.getCount());
                 fifoPaymentHall.out();
+                int customerId = customers.get(0);
+                customers.remove(0);
             }
         }
         catch(Exception e) {}    
@@ -55,10 +60,11 @@ public class SAPaymentHall implements IPaymentHall_Customer,
 
     @Override
     public void in(int customerId) {
+        customers.add(customerId);
+        int customerLeaving = fifoPaymentHall.in(customerId);
         notify.sendCustomerState("PaymentHall", customerId);
         int position = this.selectPositionInGUI(customerId);
         GUI.moveCustomer(customerId, new Integer[] {id, position});
-        int customerLeaving = fifoPaymentHall.in(customerId);
     }
     
     @Override
