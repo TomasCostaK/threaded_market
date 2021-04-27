@@ -9,6 +9,8 @@ import Communication.NotifyCustomerState;
 import FIFO.Queue;
 import Main.OIS_GUI;
 import SAPaymentHall.SAPaymentHall;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -48,35 +50,7 @@ public class SACorridor implements ICorridor_Customer,
             //System.out.println("corridor " + id + " count:   "+fifoCorridor.getCount());
             fifoCorridor.in(customerId);
             notify.sendCustomerState("Corridor", customerId);
-            int previous_position = 0;
-            for(int i=0; i<10; i++) {
-                int position = i;
-                while(this.customersPosition[position] != -1) {}                
-                this.customersPosition[previous_position] = -1;
-                this.customersPosition[position] = customerId;
-                while (true) {
-                    if (!this.suspended) {
-                        if (position==9) {  // last position in corridor (aqui parar porque o resto ainda não está feito)
-                            GUI.moveCustomer(customerId, new Integer[] {id, position});
-                            System.out.println("Customer "+customerId+" trying to enter PaymentHall, count is: " + paymentHall.getFifoPaymentHall().getCount());
-                            paymentHall.in(customerId);
-                            // It will never get here, this is wrong
-                            previous_position = position;
-                            this.customersPosition[previous_position] = -1;
-                            out();
-                        }
-                        else {
-                            GUI.moveCustomer(customerId, new Integer[] {id, position});
-                            Thread.sleep(cto);  
-                            previous_position = position;
-                        }
-                        break;
-                    }
-                    else {
-                        Thread.sleep(1000);
-                    }
-                }    
-            }
+            forward(customerId, cto);
         } catch (Exception e) {};
         
     }
@@ -94,9 +68,45 @@ public class SACorridor implements ICorridor_Customer,
     }
 
     // Blocking condition, keeps moving forward until checkTreadmill returns that there is someone in front
-    @Override
-    public void forward() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void forward(int customerId, int cto) {
+        while(true){
+            try {
+            int previous_position = 0;
+            for(int i=0; i<10; i++) {
+                int position = i;
+                while(this.customersPosition[position] != -1) {
+                    Thread.sleep(1500);
+                } //stuck in a loop,               
+                this.customersPosition[previous_position] = -1;
+                this.customersPosition[position] = customerId;
+                while(true){
+                    if (!this.suspended) {
+                        if (position==9) {  
+                            GUI.moveCustomer(customerId, new Integer[] {id, position});
+                            System.out.println("Customer "+customerId+" trying to enter PaymentHall, count is: " + paymentHall.getFifoPaymentHall().getCount());
+                            paymentHall.in(customerId);
+                            // It will never get here, this is wrong
+                            previous_position = position;
+                            this.customersPosition[previous_position] = -1;
+                            out();
+                            return;
+                        }
+                        else {
+                            GUI.moveCustomer(customerId, new Integer[] {id, position});
+                            Thread.sleep(cto);  
+                            previous_position = position;
+                        }
+                        break;
+                    }
+                    else {
+                        Thread.sleep(1500);
+                    }
+                }
+            }
+            } catch (InterruptedException ex) {
+                Logger.getLogger(SACorridor.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
     
 

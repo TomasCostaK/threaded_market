@@ -16,5 +16,4 @@ public interface ICorridor_Customer {
     public void in( int customerId, int cto );
     public void out();
     public void checkTreadmill();
-    public void forward();
 }
