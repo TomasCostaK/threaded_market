@@ -6,7 +6,7 @@
 package SAPaymentHall;
 import Communication.NotifyCustomerState;
 
-import FIFO.FIFO;
+import FIFO.Queue;
 import Main.OIS_GUI;
 import SAPaymentPoint.SAPaymentPoint;
 import java.util.concurrent.TimeUnit;
@@ -20,7 +20,7 @@ public class SAPaymentHall implements IPaymentHall_Customer,
                                        IPaymentHall_Cashier,
                                        IPaymentHall_Control {
     
-    final FIFO fifoPaymentHall;
+    final Queue fifoPaymentHall;
     private int totalCustomers;
     private final OIS_GUI GUI;
     private final int customersPosition[];
@@ -30,7 +30,7 @@ public class SAPaymentHall implements IPaymentHall_Customer,
 
 
     public SAPaymentHall( int maxCustomers, OIS_GUI GUI, NotifyCustomerState notify, int id , SAPaymentPoint paymentPoint ) {
-        this.fifoPaymentHall = new FIFO(maxCustomers);
+        this.fifoPaymentHall = new Queue<Integer>(maxCustomers);
         this.GUI = GUI;
         this.totalCustomers = maxCustomers;
         this.customersPosition = new int[totalCustomers];
@@ -45,9 +45,10 @@ public class SAPaymentHall implements IPaymentHall_Customer,
     @Override
     public void call() {
         try {
-            if (fifoPaymentHall.getCount() > 0) {
+            while (fifoPaymentHall.getCount() > 0 && paymentPoint.getFifoPaymentPoint().hasSpace()) {
                 System.out.println("Cashier calling people in paymentHall");
                 fifoPaymentHall.out();
+                Thread.sleep(200);
             }
         }
         catch(Exception e) {}    
@@ -55,10 +56,22 @@ public class SAPaymentHall implements IPaymentHall_Customer,
 
     @Override
     public void in(int customerId) {
-        notify.sendCustomerState("PaymentHall", customerId);
-        int position = this.selectPositionInGUI(customerId);
-        GUI.moveCustomer(customerId, new Integer[] {id, position});
-        fifoPaymentHall.in(customerId);
+        while(true){
+            if (fifoPaymentHall.hasSpace()){
+                notify.sendCustomerState("PaymentHall", customerId);
+                int position = this.selectPositionInGUI(customerId);
+                GUI.moveCustomer(customerId, new Integer[] {id, position});
+                fifoPaymentHall.in(customerId);
+                this.customersPosition[position] = -1;
+                return;
+            }
+            
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+            }
+        }
+
     }
     
     @Override
@@ -75,7 +88,7 @@ public class SAPaymentHall implements IPaymentHall_Customer,
         return position;
     } 
 
-    public FIFO getFifoPaymentHall() {
+    public Queue getFifoPaymentHall() {
         return this.fifoPaymentHall;
     }
 }

@@ -6,7 +6,7 @@
 package SAPaymentPoint;
 import Communication.NotifyCustomerState;
 
-import FIFO.FIFO;
+import FIFO.Queue;
 import Main.OIS_GUI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,7 +19,7 @@ public class SAPaymentPoint implements IPaymentPoint_Customer,
                                        IPaymentPoint_Cashier,
                                        IPaymentPoint_Control {
     
-    final FIFO fifoPaymentBox;
+    final Queue fifoPaymentBox;
     private int totalCustomers;
     private final OIS_GUI GUI;
     private final int customersPosition[];
@@ -28,7 +28,7 @@ public class SAPaymentPoint implements IPaymentPoint_Customer,
     private int customerLeaving;
 
     public SAPaymentPoint( int maxCustomers, OIS_GUI GUI, NotifyCustomerState notify, int id ) {
-        this.fifoPaymentBox = new FIFO(maxCustomers);
+        this.fifoPaymentBox = new Queue<Integer>(maxCustomers);
         this.GUI = GUI;
         this.customerLeaving = -1;
         this.totalCustomers = maxCustomers;
@@ -54,11 +54,23 @@ public class SAPaymentPoint implements IPaymentPoint_Customer,
 
     @Override
     public void in(int customerId) {
-        notify.sendCustomerState("PaymentPoint", customerId);
-        int position = this.selectPositionInGUI(customerId);
-        GUI.moveCustomer(customerId, new Integer[] {id, position});
-        this.customerLeaving = customerId;
-        fifoPaymentBox.in(customerId);
+        while(true){
+            if (fifoPaymentBox.hasSpace()){
+                fifoPaymentBox.in(customerId);
+                notify.sendCustomerState("PaymentPoint", customerId);
+                int position = this.selectPositionInGUI(customerId);
+                GUI.moveCustomer(customerId, new Integer[] {id, position});
+                this.customerLeaving = customerId;
+                this.customersPosition[position] = -1;
+                return;
+            }
+            
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+            }
+        }
+
     }
     
     private int selectPositionInGUI(int customerId){
@@ -70,7 +82,7 @@ public class SAPaymentPoint implements IPaymentPoint_Customer,
         return position;
     } 
     
-    public FIFO getFifoPaymentPoint() {
+    public Queue getFifoPaymentPoint() {
         return this.fifoPaymentBox;
     }
 
