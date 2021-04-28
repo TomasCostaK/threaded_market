@@ -107,7 +107,6 @@ public class AECustomer extends Thread {
                         break;
                     }
                     corridors[this.corridorNumber].setStopped(false);
-                    Thread.sleep(1000);
                     this.stopped = corridors[this.corridorNumber].in(customerId, cto);
                     if(this.stopped==1) continue; // STOP
                     else if (this.stopped==2) {  // END
@@ -117,6 +116,7 @@ public class AECustomer extends Thread {
                         break;
                     }
                     paymentHall.in(customerId);
+                    Thread.sleep(1500);
                     paymentPoint.in(customerId);
                     
                     Thread.sleep(1000000);

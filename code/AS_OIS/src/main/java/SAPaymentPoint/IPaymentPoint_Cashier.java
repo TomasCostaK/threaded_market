@@ -14,5 +14,5 @@ import SAPaymentHall.*;
  */
 public interface IPaymentPoint_Cashier {
     // this new process is to let customers leave the store
-    public void out();
+    public void process();
 }

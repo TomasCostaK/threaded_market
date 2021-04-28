@@ -35,8 +35,12 @@ public class AECashier extends Thread { // id do customer
         idle.idle();
         while ( true ) {
             paymentHall.call();
-            paymentPoint.out();
-
+            paymentPoint.process();
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ex) {
+                
+            }
         }
     }
     
