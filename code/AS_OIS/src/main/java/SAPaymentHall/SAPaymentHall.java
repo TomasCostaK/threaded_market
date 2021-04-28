@@ -55,10 +55,10 @@ public class SAPaymentHall implements IPaymentHall_Customer,
 
     @Override
     public void in(int customerId) {
-        fifoPaymentHall.in(customerId);
         notify.sendCustomerState("PaymentHall", customerId);
         int position = this.selectPositionInGUI(customerId);
         GUI.moveCustomer(customerId, new Integer[] {id, position});
+        fifoPaymentHall.in(customerId);
     }
     
     @Override
