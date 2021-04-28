@@ -73,7 +73,7 @@ public class SACorridorHall implements ICorridorHall_Customer,
                     break;
                 }
                 else {
-                    Thread.sleep(1000);
+                    Thread.sleep(10);
                 }
             }
         } catch (Exception e ) {};
