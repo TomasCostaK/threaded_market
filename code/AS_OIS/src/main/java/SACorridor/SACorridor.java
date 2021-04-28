@@ -94,9 +94,16 @@ public class SACorridor implements ICorridor_Customer,
                                                         // It will never get here, this is wrong
                             
                                                         
-                            previous_position = position;
-                            this.customersPosition[previous_position] = -1;
-                            out();
+                            while (true) {
+                                if(paymentHall.getFifoPaymentHall().getCount() < 2) { 
+                                    previous_position = position;
+                                    this.customersPosition[previous_position] = -1;
+                                    out();
+                                    
+                                    break;
+                                }
+                                else Thread.sleep(1000);
+                            }
                             
                             return 0;
                         }
