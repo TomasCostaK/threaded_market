@@ -91,7 +91,6 @@ public class SACorridor implements ICorridor_Customer,
                         if (position==9) {  
                             GUI.moveCustomer(customerId, new Integer[] {id, position});
                             System.out.println("Customer "+customerId+" trying to enter PaymentHall, count is: " + paymentHall.getFifoPaymentHall().getCount());
-                            Thread.sleep(100000);
                             paymentHall.in(customerId);
                             // It will never get here, this is wrong
                             previous_position = position;
