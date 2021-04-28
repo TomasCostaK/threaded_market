@@ -82,7 +82,7 @@ public class SACorridorHall implements ICorridorHall_Customer,
 
     @Override
     public boolean checkCorridor() {
-        //System.out.println("Corridor " + id + " Count: " + corridor.getFifoCorridor().getCount() + " Size: " + corridor.getFifoCorridor().getSize());
+        System.out.println("Corridor " + id + " Count: " + corridor.getFifoCorridor().getCount() + " Size: " + corridor.getFifoCorridor().getSize());
         this.corridorHasSpace = this.corridor.getFifoCorridor().hasSpace();
         return this.corridorHasSpace;
 

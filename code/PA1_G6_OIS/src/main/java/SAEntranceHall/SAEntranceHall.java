@@ -51,6 +51,7 @@ public class SAEntranceHall implements IEntranceHall_Customer,
                 while (true) {
                     if (!this.suspended) {
                         if (this.corridorHalls[0].getFifoCorridorHall().hasSpace()) {
+                            setCorridorHall_number(0); 
                             this.fifoEntranceHall.out();
                             TimeUnit.SECONDS.sleep(1);
                             break;
