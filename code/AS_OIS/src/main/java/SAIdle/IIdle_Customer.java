@@ -10,5 +10,7 @@ package SAIdle;
  * @author omp
  */
 public interface IIdle_Customer {
-    public int idle( int customerId ) ;
+    public int idle( int customerId, int stopped );
+    public void setFirstStopped(boolean firstStopped);
+    public void setPreviousCustomerId();
 }

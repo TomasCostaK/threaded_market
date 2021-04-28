@@ -28,7 +28,7 @@ public class ManagerHall {
         while(!checkOutsideHallAndEntranceHall()) {
             try {
                 Thread.sleep(100);
-                //System.out.println("Manager in Manager Controll Hall.");
+                System.out.println("Manager in Manager Controll Hall.");
             } catch (InterruptedException ex) {
                 
             }

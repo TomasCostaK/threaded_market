@@ -16,4 +16,6 @@ public interface IEntranceHall_Control {
     public void resume();
     
     public void stop();
+    
+    public void end();
 }

@@ -5,6 +5,8 @@
  */
 package SAIdle;
 
+import Communication.NotifyCustomerState;
+import Main.OIS_GUI;
 import java.util.Random;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -28,8 +30,13 @@ public class SAIdle implements IIdle_Customer,
     private ArrayList<Integer> orderedCustomers = new ArrayList<Integer>();
     private int cto;
     private int previousCustomerId;
+    private final OIS_GUI GUI;
+    private boolean firstStopped;
+    private final NotifyCustomerState notify;
+    private boolean ended;
+    private boolean notChoose;
 
-    public SAIdle() {
+    public SAIdle(OIS_GUI GUI, NotifyCustomerState notify) {
         this.notStarted = rl.newCondition(); 
         this.notChoosen = rl.newCondition(); 
         this.notNext = rl.newCondition();
@@ -37,6 +44,11 @@ public class SAIdle implements IIdle_Customer,
         this.nCustomers = 10;
         this.cto = 0;
         this.previousCustomerId = -1;
+        this.GUI = GUI;
+        this.firstStopped = true;
+        this.notify = notify;
+        this.ended = false;
+        this.notChoose = true;
     }
     
     @Override
@@ -46,25 +58,35 @@ public class SAIdle implements IIdle_Customer,
     
     // idle Customer
     @Override
-    public int idle( int customerId ) {
+    public int idle( int customerId, int stopped ) {
         System.out.println("Customer " + customerId + " idle.");
         rl.lock();
         try {
-            while (customerIdle == true) {
-                notStarted.await();
+            if(stopped==1) {
+                this.customerIdle = true;
+                notify.sendCustomerState("Idle", customerId);
+                if(this.firstStopped) {
+                    GUI.cleanCustomers();
+                    this.firstStopped = false;
+                }
+            }
+            while (this.customerIdle == true) {
+                this.notStarted.await();
             }  
+           
             if (customerId > this.nCustomers) {
-                notChoosen.await();
+                while(notChoose) this.notChoosen.await();
+                if (this.ended) return 1;
                 //System.out.println("Customer " + customerId + " entering OutsideHall.");
                 //orderedCustomers.set(customerId, customerId);
                 //System.out.println("Customers Array: " + orderedCustomers);
             }
             else {
                 while (customerId != this.previousCustomerId + 1) {
-                    notNext.await();
+                    this.notNext.await();
                 }
                 this.previousCustomerId++;
-                notNext.signalAll();
+                this.notNext.signalAll();
                 
                
             }
@@ -90,9 +112,9 @@ public class SAIdle implements IIdle_Customer,
         try {
             TimeUnit.SECONDS.sleep(5); // só para simular o user a dar start
             System.out.println("Start simulation...");
-            customerIdle = false;
+            this.customerIdle = false;
             this.cto = cto;
-            notStarted.signalAll();
+            this.notStarted.signalAll();
         } 
         catch ( InterruptedException ex ) {}
         finally {
@@ -101,9 +123,16 @@ public class SAIdle implements IIdle_Customer,
  
     }
     @Override
-    public void end() { 
-        System.out.println("End Simulation");
-        
+    public void end() {
+        rl.lock();
+        try {
+            this.notChoose = false;
+            this.notChoosen.signalAll();
+            this.ended = true;
+        }
+        finally {
+          rl.unlock();
+        }     
     }
     
     
@@ -116,7 +145,18 @@ public class SAIdle implements IIdle_Customer,
         this.nCustomers = nCustomers;
     }
     
-   
+    @Override
+    public void setFirstStopped(boolean firstStopped) {
+        this.firstStopped = firstStopped;
+    }
+    
+    
+    
+    @Override
+    public void setPreviousCustomerId() {
+        this.previousCustomerId = -1;
+    }
+       
 }
 
 

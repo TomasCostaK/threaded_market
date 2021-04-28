@@ -16,4 +16,6 @@ public interface IOutsideHall_Control {
     public void resume();
     
     public void stop();
+    
+    public void end();
 }

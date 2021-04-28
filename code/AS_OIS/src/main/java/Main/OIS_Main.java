@@ -36,7 +36,7 @@ public class OIS_Main {
 
         final NotifyCustomerState notify = new NotifyCustomerState();
         final OIS_GUI GUI = new OIS_GUI();
-        final SAIdle idle = new SAIdle();
+        final SAIdle idle = new SAIdle(GUI, notify);
         
         final SACorridor[] corridors = new SACorridor[N_CORRIDOR];
         
@@ -87,7 +87,8 @@ public class OIS_Main {
                                               (ICorridorHall_Customer[]) corridorHalls,
                                               (ICorridor_Customer[]) corridors,
                                               (IPaymentHall_Customer) paymentHall,
-                                              (IPaymentPoint_Customer) paymentPoint
+                                              (IPaymentPoint_Customer) paymentPoint,
+                                              notify, GUI
             ); 
             aeCustomer[ i ].start();
         }

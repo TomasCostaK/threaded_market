@@ -1,0 +1,12 @@
+Main
+SAOutsideHall
+SAEntranceHall
+ManagerHall
+SACorridor
+SAPaymentHall
+ActiveEntity
+Communication
+FIFO
+SAPaymentPoint
+SACorridorHall
+SAIdle

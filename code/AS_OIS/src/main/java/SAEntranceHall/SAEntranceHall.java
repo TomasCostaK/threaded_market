@@ -30,6 +30,7 @@ public class SAEntranceHall implements IEntranceHall_Customer,
     private final ReentrantLock rl = new ReentrantLock( true );
     private boolean suspended;
     private boolean stopped;
+    private boolean ended;
 
     public SAEntranceHall( int maxCustomers, OIS_GUI GUI, NotifyCustomerState notify, SACorridorHall[] corridorHalls ) {
         this.fifoEntranceHall = new FIFO(maxCustomers);
@@ -44,6 +45,7 @@ public class SAEntranceHall implements IEntranceHall_Customer,
         this.corridorHall_number = 0;
         this.suspended = false;
         this.stopped = false;
+        this.ended = false;
     }
     
     @Override
@@ -72,7 +74,10 @@ public class SAEntranceHall implements IEntranceHall_Customer,
                         else return;
                     }
                     else {
+                        if (this.ended) fifoEntranceHall.out();
+                        if (fifoEntranceHall.getCount() == 0) return;
                         TimeUnit.SECONDS.sleep(1);
+                        
                     }
                 }
             }
@@ -91,6 +96,10 @@ public class SAEntranceHall implements IEntranceHall_Customer,
             int[] result = {this.corridorHall_number, 1};
             return result;
         } 
+        else if(this.ended) {
+            int[] result = {this.corridorHall_number, 2};
+            return result;
+        }
         int[] result = {this.corridorHall_number, 0};
         return result;
         //System.out.println("Customer " + customerLeaving + " corridor Hall: " + this.corridorHall_number);  
@@ -118,6 +127,11 @@ public class SAEntranceHall implements IEntranceHall_Customer,
     @Override
     public void stop() {
         this.stopped = true;
+    }
+
+    @Override 
+    public void end() {
+        this.ended = true;
     }
         
     public FIFO getFifoEntranceHall() {

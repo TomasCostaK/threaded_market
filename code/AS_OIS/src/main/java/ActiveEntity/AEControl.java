@@ -56,6 +56,14 @@ public class AEControl extends Thread {
     public void endSimulation() {
         // terminar Customers em idle
         idle.end();
+        outsideHall.end();
+        entranceHall.end();
+        corridorHalls[0].end();
+        corridorHalls[1].end();
+        corridorHalls[2].end();     
+        corridors[0].end();
+        corridors[1].end();
+        corridors[2].end();
         // terminar restantes Customers e outras AE
     }
     
@@ -65,7 +73,10 @@ public class AEControl extends Thread {
         entranceHall.stop();
         corridorHalls[0].stop();
         corridorHalls[1].stop();
-        corridorHalls[2].stop();   
+        corridorHalls[2].stop();  
+        corridors[0].stop();
+        corridors[1].stop();
+        corridors[2].stop();
         // terminar restantes Customers e outras AE
     }
     

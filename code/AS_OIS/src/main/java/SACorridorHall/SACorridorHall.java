@@ -29,6 +29,7 @@ public class SACorridorHall implements ICorridorHall_Customer,
     private boolean corridorHasSpace;
     private boolean suspended;
     private boolean stopped;
+    private boolean ended;
 
     public SACorridorHall( int maxCustomers, OIS_GUI GUI, NotifyCustomerState notify, int id , SACorridor corridor) {
         this.fifoCorridorHall = new Queue<Integer>(maxCustomers);
@@ -45,6 +46,7 @@ public class SACorridorHall implements ICorridorHall_Customer,
         this.corridorHasSpace = false;
         this.suspended = false;
         this.stopped = false;
+        this.ended = false;
     }
     
 
@@ -61,7 +63,11 @@ public class SACorridorHall implements ICorridorHall_Customer,
         // before leaving, awaits checking if corridor is clear
         try {
             while (!checkCorridor()) {
-                if (this.stopped) return 1;
+                if (this.stopped) {
+                    fifoCorridorHall.out();
+                    return 1;
+                }
+                else if(this.ended) return 2;
             }
             while (true) {
                 if (!this.suspended) {
@@ -121,6 +127,11 @@ public class SACorridorHall implements ICorridorHall_Customer,
     @Override
     public void stop() {
         this.stopped = true;
+    }
+
+    @Override 
+    public void end() {
+        this.ended = true;
     }
     
     @Override

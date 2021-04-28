@@ -27,6 +27,8 @@ public class SACorridor implements ICorridor_Customer,
     private final int customersPosition[];
     final SAPaymentHall paymentHall;
     private boolean suspended;
+    private boolean stopped;
+    private boolean ended;
 
     public SACorridor( int maxCustomers, OIS_GUI GUI, NotifyCustomerState notify, int id, SAPaymentHall paymentHall ) {
         this.fifoCorridor = new Queue<Integer>(maxCustomers);
@@ -40,19 +42,22 @@ public class SACorridor implements ICorridor_Customer,
         }
         this.paymentHall = paymentHall;
         this.suspended = false;
+        this.stopped = false;
+        this.ended = false;
     }
     
 
     @Override
-    public void in(int customerId, int cto) {
+    public int in(int customerId, int cto) {
+        int stop = 0;
         try {
             //System.out.println("corridor " + id + " size: "+fifoCorridor.getSize());
             //System.out.println("corridor " + id + " count:   "+fifoCorridor.getCount());
             fifoCorridor.in(customerId);
             notify.sendCustomerState("Corridor", customerId);
-            forward(customerId, cto);
+            stop = forward(customerId, cto);
         } catch (Exception e) {};
-        
+        return stop;
     }
     
     @Override
@@ -68,7 +73,7 @@ public class SACorridor implements ICorridor_Customer,
     }
 
     // Blocking condition, keeps moving forward until checkTreadmill returns that there is someone in front
-    public void forward(int customerId, int cto) {
+    public int forward(int customerId, int cto) {
         while(true){
             try {
             int previous_position = 0;
@@ -79,17 +84,20 @@ public class SACorridor implements ICorridor_Customer,
                 } //stuck in a loop,               
                 this.customersPosition[previous_position] = -1;
                 this.customersPosition[position] = customerId;
+                if(this.stopped) return 1;
+                else if(this.ended) return 2;
                 while(true){
                     if (!this.suspended) {
                         if (position==9) {  
                             GUI.moveCustomer(customerId, new Integer[] {id, position});
                             System.out.println("Customer "+customerId+" trying to enter PaymentHall, count is: " + paymentHall.getFifoPaymentHall().getCount());
+                            Thread.sleep(100000);
                             paymentHall.in(customerId);
                             // It will never get here, this is wrong
                             previous_position = position;
                             this.customersPosition[previous_position] = -1;
                             out();
-                            return;
+                            return 0;
                         }
                         else {
                             GUI.moveCustomer(customerId, new Integer[] {id, position});
@@ -122,6 +130,27 @@ public class SACorridor implements ICorridor_Customer,
     @Override
     public void resume() {
         this.suspended = false;
+    }
+    
+    @Override
+    public void stop() {
+        this.stopped = true;
+    }
+    
+    @Override 
+    public void end() {
+        this.ended = true;
+    }
+    
+    @Override
+    public void setStopped(boolean stopped) {
+        this.stopped = stopped;
+    }
+    
+    public void setInitialPositions() {
+        for(int i = 0; i < 10; i ++){
+            this.customersPosition[i] = -1;
+        }
     }
 }
 

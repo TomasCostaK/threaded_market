@@ -16,5 +16,7 @@ public interface ICorridorHall_Control {
     public void resume();
     
     public void stop();
+    
+    public void end();
 
 }

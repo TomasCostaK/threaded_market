@@ -55,9 +55,9 @@ public class OIS_GUI extends javax.swing.JFrame {
         for(int i=0; i<3; i++) corridorHall1[i].setText(""); 
         for(int i=0; i<3; i++) corridorHall2[i].setText(""); 
         for(int i=0; i<3; i++) corridorHall3[i].setText(""); 
-        for(int i=0; i<3; i++) corridor1[i].setText(""); 
-        for(int i=0; i<3; i++) corridor2[i].setText(""); 
-        for(int i=0; i<3; i++) corridor3[i].setText(""); 
+        for(int i=0; i<10; i++) corridor1[i].setText(""); 
+        for(int i=0; i<10; i++) corridor2[i].setText(""); 
+        for(int i=0; i<10; i++) corridor3[i].setText(""); 
         for(int i=0; i<2; i++) paymentHall[i].setText(""); 
         for(int i=0; i<1; i++) paymentPoint[i].setText(""); 
     }

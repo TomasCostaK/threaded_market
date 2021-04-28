@@ -29,6 +29,7 @@ public class SAOutsideHall implements IOutsideHall_Manager,
     private int previousCustomerId;
     private boolean suspended;
     private boolean stopped;
+    private boolean ended;
     
 
     public SAOutsideHall( int totalCustomers, OIS_GUI GUI, NotifyCustomerState notify, SAEntranceHall entranceHall) {
@@ -44,6 +45,7 @@ public class SAOutsideHall implements IOutsideHall_Manager,
         this.previousCustomerId = -1;
         this.suspended = false;
         this.stopped = false;
+        this.ended = false;
     } 
 
     @Override
@@ -56,6 +58,7 @@ public class SAOutsideHall implements IOutsideHall_Manager,
         if (this.stopped) {
             return 1;
         }
+        else if(this.ended) return 2;
         return 0;
     }
     
@@ -72,7 +75,11 @@ public class SAOutsideHall implements IOutsideHall_Manager,
                     break;
                 }
                 else{
-                    try { 
+                    try {
+                        if (this.ended) {
+                            fifoOutsideHall.out();
+                            if (fifoOutsideHall.getCount() == 0) return;
+                        }
                         Thread.sleep(1000);
                     } catch (InterruptedException ex) {}
                 } 
@@ -106,6 +113,11 @@ public class SAOutsideHall implements IOutsideHall_Manager,
     @Override 
     public void stop() {
         this.stopped = true;
+    }
+    
+    @Override 
+    public void end() {
+        this.ended = true;
     }
     
     @Override

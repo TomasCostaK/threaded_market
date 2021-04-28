@@ -12,7 +12,8 @@ package SACorridor;
  */
 public interface ICorridor_Control {
     public void suspend();
-
     public void resume();
+    public void stop();
+    public void end();
 }
 
