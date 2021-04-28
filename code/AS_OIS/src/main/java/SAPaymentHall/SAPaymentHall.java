@@ -45,7 +45,7 @@ public class SAPaymentHall implements IPaymentHall_Customer,
     @Override
     public void call() {
         try {
-            if (fifoPaymentHall.getCount() > 0) {
+            if (fifoPaymentHall.getCount() > 0 && paymentPoint.getFifoPaymentPoint().getCount() < paymentPoint.getFifoPaymentPoint().getMaxCustomers()) {
                 System.out.println("Cashier calling people in paymentHall");
                 fifoPaymentHall.out();
             }

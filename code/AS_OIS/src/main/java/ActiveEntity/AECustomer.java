@@ -116,7 +116,6 @@ public class AECustomer extends Thread {
                         break;
                     }
                     paymentHall.in(customerId);
-                    Thread.sleep(1500);
                     paymentPoint.in(customerId);
                     
                     Thread.sleep(1000000);

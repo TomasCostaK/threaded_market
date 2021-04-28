@@ -40,16 +40,16 @@ public class SAPaymentPoint implements IPaymentPoint_Customer,
         this.notify = notify;
     }
     
-    @Override
-    public void process() {
-        if (fifoPaymentBox.getCount() > 0){
+    public void out(){
+        if (fifoPaymentBox.getCount()>0){
             System.out.println("Cashier processing payment");
-            fifoPaymentBox.out();
             this.customersPosition[0] = -1;
+            fifoPaymentBox.out();
             // Signaling its over
             notify.sendCustomerState("Terminated", customerLeaving);
             GUI.moveCustomer(customerLeaving, new Integer[] {10, customerLeaving});
-        }
+        }  
+        
     }
 
     @Override
