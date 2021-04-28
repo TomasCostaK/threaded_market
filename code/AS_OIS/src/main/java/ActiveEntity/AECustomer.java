@@ -115,11 +115,11 @@ public class AECustomer extends Thread {
                         Thread.currentThread().interrupt();
                         break;
                     }
+                    paymentHall.in(customerId);
+                    Thread.sleep(1500);
                     paymentPoint.in(customerId);
                     
-                   
-  
-                    Thread.sleep(100000);
+                    Thread.sleep(1000000);
                 }             
             }
             catch ( InterruptedException ex ) {}

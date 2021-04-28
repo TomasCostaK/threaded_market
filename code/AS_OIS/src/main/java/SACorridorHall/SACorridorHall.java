@@ -68,6 +68,7 @@ public class SACorridorHall implements ICorridorHall_Customer,
                     return 1;
                 }
                 else if(this.ended) return 2;
+                else Thread.sleep(1000);
             }
             while (true) {
                 if (!this.suspended) {
